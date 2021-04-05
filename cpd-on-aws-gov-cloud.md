@@ -10,11 +10,17 @@ https://docs.openshift.com/container-platform/4.6/installing/installing_aws/inst
 
 #### Requirements
 
+* AWS Government Region
+```
+        us-gov-west-1
+        us-gov-east-1
+```
 * AWS account access
 ```
          * access_key_id = "xxxxxxxxxxxxxxxxxxxxxxx"
          * secret_access_key = "xxxxxxxxxxxxxxxxxxxxxxx"
 ```
+
 
 ## Deploying Cloud Pak for Data
 
