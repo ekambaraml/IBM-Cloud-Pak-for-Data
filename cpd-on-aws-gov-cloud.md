@@ -20,6 +20,15 @@ https://docs.openshift.com/container-platform/4.6/installing/installing_aws/inst
          * access_key_id = "xxxxxxxxxxxxxxxxxxxxxxx"
          * secret_access_key = "xxxxxxxxxxxxxxxxxxxxxxx"
 ```
+#### Private cluster
+ 
+To create a private cluster on Amazon Web Services (AWS), you must provide an existing private VPC and subnets to host the cluster. The installation program must also be able to resolve the DNS records that the cluster requires. The installation program configures the Ingress Operator and API server for access from only the private network.
+
+- Public subnets
+- Public load balancers, which support public ingress
+- A public Route 53 zone that matches the baseDomain for the cluster
+        
+
 
 
 ## Deploying Cloud Pak for Data
