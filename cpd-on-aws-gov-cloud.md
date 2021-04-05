@@ -5,7 +5,15 @@ Topics
 - Deploying OpenShift 4.6 on AWS gov cloud
 - Deploying Cloud Pak for Data 3.5
 
+## Deploying OpenShift 4.6
 
+### Requirements
+
+* AWS account access
+```
+         * access_key_id = "xxxxxxxxxxxxxxxxxxxxxxx"
+         * secret_access_key = "xxxxxxxxxxxxxxxxxxxxxxx"
+```
 
 ## Deploying Cloud Pak for Data
 
