@@ -29,6 +29,12 @@ To create a private cluster on Amazon Web Services (AWS), you must provide an ex
 - A public Route 53 zone that matches the baseDomain for the cluster
         
 
+#### Setup Bastion Host
+
+Make sure this machine has internet access
+* 8core/32GB/120GB. 
+* If you want to use this as NFS server, add additional 1TB disk
+
 
 
 ## Deploying Cloud Pak for Data
