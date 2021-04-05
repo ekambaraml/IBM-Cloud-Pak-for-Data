@@ -86,6 +86,8 @@ Topics
         --insecure-skip-tls-verify \
         --latest-dependency 
 
+   ![image](https://user-images.githubusercontent.com/26153008/113579340-c8941a80-95e9-11eb-9366-fbf81f467f47.png)
+
 * 
 * Installing Watson Knowledge Catelog (wkc)
 
