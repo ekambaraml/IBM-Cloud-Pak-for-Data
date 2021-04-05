@@ -5,9 +5,10 @@ Topics
 - Deploying OpenShift 4.6 on AWS gov cloud
 - Deploying Cloud Pak for Data 3.5
 
-## Deploying OpenShift 4.6
+### Deploying OpenShift 4.6
+https://docs.openshift.com/container-platform/4.6/installing/installing_aws/installing-aws-government-region.html
 
-### Requirements
+#### Requirements
 
 * AWS account access
 ```
