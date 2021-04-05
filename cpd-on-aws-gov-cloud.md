@@ -19,8 +19,74 @@ Topics
 
 ### Installing Cloud Pak for Data and Services
 
+
 * Installing CPD Control Plane (lite)
+
+        
+        ./cpd-cli adm --assembly lite -n zen --arch x86_64 -r ./repo.yaml --accept-all-licenses --apply
+
+
+        Install assembly dry-run
+        ./cpd-cli install \
+        --repo ./repo.yaml \
+        --assembly lite \
+        --namespace zen \
+        --storageclass aws-efs \
+        --transfer-image-to $(oc registry info)/zen \
+        --cluster-pull-prefix $( oc registry info --internal)/zen \
+        --target-registry-username kubeadmin \
+        --target-registry-password $(oc whoami -t) \
+        --insecure-skip-tls-verify \
+        --latest-dependency \
+        --dry-run
+
+
+        Installing assembly
+        ./cpd-cli install \
+        --repo ./repo.yaml \
+        --assembly lite \
+        --namespace zen \
+        --storageclass aws-efs \
+        --transfer-image-to $(oc registry info)/zen \
+        --cluster-pull-prefix $( oc registry info --internal)/zen \
+        --target-registry-username kubeadmin \
+        --target-registry-password $(oc whoami -t) \
+        --insecure-skip-tls-verify \
+        --latest-dependency 
+
+
 * Installing Watson Studio (wsl)
+
+        ./cpd-cli adm --assembly wsl -n zen --arch x86_64 -r ./repo.yaml --accept-all-licenses --apply
+
+
+        ./cpd-cli install \
+        --repo ./repo.yaml \
+        --assembly wsl \
+        --namespace zen \
+        --storageclass aws-efs \
+        --transfer-image-to $(oc registry info)/zen \
+        --cluster-pull-prefix $( oc registry info --internal)/zen \
+        --target-registry-username kubeadmin \
+        --target-registry-password $(oc whoami -t) \
+        --insecure-skip-tls-verify \
+        --latest-dependency \
+        --dry-run
+
+
+        ./cpd-cli install \
+        --repo ./repo.yaml \
+        --assembly wsl \
+        --namespace zen \
+        --storageclass aws-efs \
+        --transfer-image-to $(oc registry info)/zen \
+        --cluster-pull-prefix $( oc registry info --internal)/zen \
+        --target-registry-username kubeadmin \
+        --target-registry-password $(oc whoami -t) \
+        --insecure-skip-tls-verify \
+        --latest-dependency 
+
+* 
 * Installing Watson Knowledge Catelog (wkc)
 
 
