@@ -87,9 +87,13 @@ Topics
         --latest-dependency 
 
    ![image](https://user-images.githubusercontent.com/26153008/113579340-c8941a80-95e9-11eb-9366-fbf81f467f47.png)
+   
+   On Successfull Deployment, users should be able to access the CPD Web Console
+   ![image](https://user-images.githubusercontent.com/26153008/113579721-4f48f780-95ea-11eb-914e-e4eeb388263b.png)
 
-* 
-* Installing Watson Knowledge Catelog (wkc)
+
+* Other CPD services WKC, Op
+
 
 
 ### I
