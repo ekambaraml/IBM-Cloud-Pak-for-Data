@@ -1,0 +1,45 @@
+cat - > /etc/systemd/system/mirror-registry.service <<EOF
+
+[Unit]
+Description=Mirror registry (mirror-registry)
+After=network.target
+
+[Service]
+Type=simple
+TimeoutStartSec=5m
+
+
+ExecStartPre=-/usr/bin/podman rm "mirror-registry"
+ExecStartPre=/usr/bin/podman pull quay.io/redhat-emea-ssa-team/registry:2
+ExecStart=/usr/bin/podman run --name mirror-registry --net host \
+   -v /var/lib/libvirt/images/mirror-registry/data:/var/lib/registry:z \
+   -v /var/lib/libvirt/images/mirror-registry/auth:/auth:z \
+   -e "REGISTRY_AUTH=htpasswd" \
+   -e "REGISTRY_HTTP_ADDR=192.168.50.1:5000" \
+   -e "REGISTRY_AUTH_HTPASSWD_REALM=registry-realm" \
+   -e "REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd" \
+   -e "REGISTRY_COMPATIBILITY_SCHEMA1_ENABLED=TRUE" \
+   -v /var/lib/libvirt/images/mirror-registry/certs:/certs:z \
+   -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
+   -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
+   -e REGISTRY_COMPATIBILITY_SCHEMA1_ENABLED=true \
+   quay.io/redhat-emea-ssa-team/registry:2
+   
+ExecReload=-/usr/bin/podman stop "mirror-registry"
+ExecReload=-/usr/bin/podman rm "mirror-registry"
+ExecStop=-/usr/bin/podman stop "mirror-registry"
+Restart=alwaysRestartSec=30
+   
+[Install]
+WantedBy=multi-user.target
+EOF
+
+
+### Enable and start mirror registry
+systemctl enable --now mirror-registry.service
+systemctl status mirror-registry.service
+
+
+### Configure firewall for Centos or RHEL
+firewall-cmd --zone=public --permanent --add-port=5000/tcp
+firewall-cmd --reload
