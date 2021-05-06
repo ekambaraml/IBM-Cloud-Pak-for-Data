@@ -1,0 +1,66 @@
+apiVersion: v1
+baseDomain: ibmcp4d.com
+credentialsMode: Mint 
+controlPlane:   
+  hyperthreading: Enabled 
+  name: master
+  platform:
+    aws:
+      zones:
+      - us-gov-west-1a
+      - us-gov-west-1b
+      - us-gov-west-1c
+      rootVolume:
+        iops: 4000
+        size: 500
+        type: io1 
+      type: m5.xlarge
+  replicas: 3
+compute: 
+- hyperthreading: Enabled 
+  name: worker
+  platform:
+    aws:
+      rootVolume:
+        iops: 2000
+        size: 500
+        type: io1 
+      type: m5.4xlarge
+      zones:
+      - us-gov-west-1a
+      - us-gov-west-1b
+      - us-gov-west-1c
+  replicas: 17
+metadata:
+  name: cx-sandbox
+networking:
+  clusterNetwork:
+  - cidr: 10.46.0.0/16
+    hostPrefix: 23
+  machineNetwork:
+  - cidr: 10.190.41.0/27
+  - cidr: 10.190.41.32/27
+  - cidr: 10.190.41.64/27
+  - cidr: 10.190.41.128/27
+  - cidr: 10.190.41.160/27
+  - cidr: 10.190.41.192/27
+  networkType: OpenShiftSDN
+  serviceNetwork:
+  - 10.47.0.0/16
+platform:
+  aws:
+    region: us-gov-west-1
+    userTags:
+      adminContact: cx-docker-admins
+    subnets:
+    - subnet-0fbe2e2876e9d589f
+    - subnet-0173c2f32d25919ea
+    - subnet-0979bb7b908ea93fb
+    - subnet-04d0e8eed86269ebb
+    - subnet-041173edb94df5ae9
+    - subnet-0542519aff86fff81
+    amiID: ami-6e2a100f
+pullSecret: ''
+fips: true
+sshKey: ''
+publish: Internal
