@@ -60,6 +60,22 @@
 
 #### 3.0 Registry Mirrors
 
+<b> Check the pullsecrets has been created</b>
+```
+oc get secret/pull-secret -n openshift-config -o jsonpath='{.data.\.dockerconfigjson}' | base64 -d | grep us.icr.io
+
+pull_secret=$(echo -n "iamapikey:<Entitlement Key>" | base64 -w0)
+
+oc get secret/pull-secret -n openshift-config -o jsonpath='{.data.\.dockerconfigjson}' | base64 -d | sed -e 's|:{|:{"us.icr.io/4_0_rc1":{"auth":"'$pull_secret'"\},|' > /tmp/dockerconfig.json
+   
+oc set data secret/pull-secret -n openshift-config --from-file=.dockerconfigjson=/tmp/dockerconfig.json
+```
+   
+```
+  
+  
+  
+  
 #### 4.0 Cluster Pre-Requisites
 
 #### 5.0 Installing control plane
