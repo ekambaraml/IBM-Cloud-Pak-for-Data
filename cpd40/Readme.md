@@ -45,7 +45,7 @@
     ```
     wget https://ibm-open-platform.ibm.com/repos/cpd/v4.0/rc1/case/ibm-db2aaservice/4.0.0-1151.344/ibm-db2aaservice-4.0.0-1151.344.tgz
     ```
-  - DB2U Operatpr
+  - DB2U Operator
     ```
     wget https://ibm-open-platform.ibm.com/repos/cpd/v4.0/rc1/case/ibm-db2uoperator/4.0.0-3506-2130/ibm-db2uoperator-4.0.0-3506-2130.tgz
     ```
