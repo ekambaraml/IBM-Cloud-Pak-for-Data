@@ -2,9 +2,9 @@
 
 ```
 
-export USR=admin
+export USR=<admin>
 
-export PASSWORD=password
+export PASSWORD=<password>
 
 export CP4D_URL=https://<cpd-url>
 
