@@ -23,6 +23,12 @@ done
 ### Upgrading CPD Assembly
 ./cpd-cli patch --repo repo.yaml --action download --assembly rstudio --patch-name cpd-3.5.3-spark-patch-2  --download-path spark --version 3.5.3
 
+./cpd-cli patch --patch-name <cpd-3.5.0-bigsql-patch-341> -r repo.yaml -a <big-sql>  -n zen   \
+  --transfer-image-to <default-route-openshift-image-registry.apps.cluster.example.com/zen> \
+  --target-registry-username ocadmin --target-registry-password $(oc whoami -t) \
+  --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/zen \
+  --insecure-skip-tls-verify=true --accept-all-licenses --action transfer --dry-run
+
 
 ### Patching CPD Assembly
 
@@ -32,3 +38,15 @@ done
 oc get pods | egrep -iv '1/1|2/2|3/3|4/4|completed'
 
 watch "oc get pods | egrep -iv '1/1|2/2|3/3|4/4|completed'"
+
+  
+### How to Create Profile
+  
+  
+1. Get APIKEY from cloud pack for data user profile
+
+2. ./cpd-cli config users set cpd-admin-user --username admin --apikey <APIKEY>
+
+3. ./cpd-cli config profiles set cpd-admin-profile --user cpd-admin-user --url <https://zen-cpd-zen.apps.cluster.example.com>
+
+4. ./cpd-cli service-instance list --profile cpd-admin-profile
