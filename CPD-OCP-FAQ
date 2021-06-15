@@ -1,0 +1,5 @@
+* [ ] How to Clean OpenShift ImageStreams ?
+
+```
+oc get is -n <namespace> | awk '{ print $1 }' | xarg oc delete is
+```
