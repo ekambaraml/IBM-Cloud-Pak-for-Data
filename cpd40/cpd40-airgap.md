@@ -55,12 +55,13 @@ oc version
 
 - Cloud Pak for Data
 ```
-OFFLINEDIR= ${HOMEDIR}/offline
+export OFFLINEDIR=${HOMEDIR}/offline
 mkdir -p  ${OFFLINEDIR}
 cd ${OFFLINEDIR}
+export CASECTL_RESOLVE_DEPENDENCIES=false
 
 # IBM Foundation Services
-(Cloud Pak for Data, IBM Foundation Service and CPD Schduling)
+# (Cloud Pak for Data, IBM Foundation Service and CPD Schduling)
 wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-cp-datacore/2.0.0-134/ibm-cp-datacore-2.0.0-134.tgz
 get https://github.com/IBM/cloud-pak/blob/master/repo/case/ibm-cp-common-services-1.4.0.tgz?raw=true -O ibm-cp-common-services-1.4.0.tgz
 wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-cpd-scheduling/1.2.0/ibm-cpd-scheduling-1.2.0.tgz
@@ -70,7 +71,7 @@ cloudctl case save --case ${OFFLINEDIR}/ibm-cp-common-services-1.4.0.tgz  --outp
 cloudctl case save --case ${OFFLINEDIR}/ibm-cpd-scheduling-1.2.0.tgz --outputdir ${OFFLINEDIR}  -t 1
 
 # Watson Knowledge Catelog and required cases
-(Common Core Services, Data Refinery, DB2U Operator, DB2 as a Service, IBM Information Server, Watson Knowledge Catalog)
+# (Common Core Services, Data Refinery, DB2U Operator, DB2 as a Service, IBM Information Server, Watson Knowledge Catalog)
 
 wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-ccs/1.0.0-749/ibm-ccs-1.0.0-749.tgz
 wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-datarefinery/1.0.0-238/ibm-datarefinery-1.0.0-238.tgz
@@ -81,10 +82,12 @@ wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-wkc/4.0.0-416/ibm-
 
 cloudctl case save --case ${OFFLINEDIR}/ibm-ccs-1.0.0-749.tgz --outputdir ${OFFLINEDIR}  -t 1
 cloudctl case save --case ${OFFLINEDIR}/ibm-datarefinery-1.0.0-238.tgz --outputdir ${OFFLINEDIR}  -t 1
-cloudctl case save --case ${CASEDIR}/ibm-db2uoperator-4.0.0-3731.2361.tgz --outputdir ${OFFLINEDIR}  -t 1
+cloudctl case save --case ${OFFLINEDIR}/ibm-db2uoperator-4.0.0-3731.2361.tgz --outputdir ${OFFLINEDIR}  -t 1
 cloudctl case save --case ${OFFLINEDIR}/ibm-db2aaservice-4.0.0-1228.749.tgz  --outputdir ${OFFLINEDIR}  -t 1
 cloudctl case save --case ${OFFLINEDIR}/ibm-iis-4.0.0-355.tgz --outputdir ${OFFLINEDIR}  -t 1
 cloudctl case save --case ${OFFLINEDIR}/ibm-wkc-4.0.0-416.tgz --outputdir ${OFFLINEDIR}  -t 1
+# end of download
+
 ```
 
 
@@ -97,7 +100,7 @@ export CASE_VERSION=4.0.0-416
 export CASE_ARCHIVE=${CASE_NAME}-${CASE_VERSION}.tgz
 export CASE_INVENTORY_SETUP=wkcOperatorSetup
 
-export CASECTL_RESOLVE_DEPENDENCIES=false
+
 export USE_SKOPEO=true
 export PORTABLE_DOCKER_REGISTRY_HOST=10.17.5.154
 export PORTABLE_DOCKER_REGISTRY_PORT=5000
@@ -132,6 +135,9 @@ cloudctl case launch \
  --inventory $CASE_INVENTORY_SETUP \
  --action start-registry \
  --args "--registry $PORTABLE_DOCKER_REGISTRY_HOST --port $PORTABLE_DOCKER_REGISTRY_PORT --user $PORTABLE_DOCKER_REGISTRY_USER --pass $PORTABLE_DOCKER_REGISTRY_PASSWORD --dir $PORTABLE_DOCKER_REGISTRY_PATH" -t 1
+ 
+ # verify the local registry
+ podman login -u $PORTABLE_DOCKER_REGISTRY_USER -p $PORTABLE_DOCKER_REGISTRY_PASSWORD $PORTABLE_DOCKER_REGISTRY --tls-verify=false
  ```
  
 
@@ -147,7 +153,7 @@ cloudctl case launch   --case $OFFLINEDIR/${CASE_ARCHIVE}   \
 - Credentials for ic.io
 # Set the IBM Registry Entitlement token before running the command, This need be obtained from myibm.ibm.com
 
-cloudctl case launch --case /root/offline/ibm-wkc-4.0.0-416.tgz \
+cloudctl case launch --case $OFFLINEDIR/${CASE_ARCHIVE} \
   --inventory wkcOperatorSetup  --action configure-creds-airgap \
   --args "--registry ${IBM_REGISTRY} --user ${IBM_REGISTRY_USER} --pass ${IBM_REGISTRY_TOKEN}"
 
@@ -160,7 +166,7 @@ cloudctl case launch  --case $OFFLINEDIR/${CASE_ARCHIVE} \
 ```
 
 - Run the mirroring
-You need to run the Mirror one time, this dowdload and transfer all images into local portalble registry.
+  - This process will take few hours depends on your external network connectivity speeds. This dowdloads and transfer all images into local portalble registry.
 
 ```
 cloudctl case launch   --case $OFFLINEDIR/${CASE_ARCHIVE}   \
