@@ -23,13 +23,13 @@ Permissions | Roles
 OpenShift Cluster Admin | Downloading Product images, Installing
 
 ### Getting Product and Installers
-The following commands are run from a internet facing clients with access to IBM repository urls to download the products.
+   - This section of the steps should be run on a internet facing client machine to obtain the tools and images required for the installations.
 
 - Client Machine Requirements
-```
-skope - 1.2 or latest
-openssl 1.11 or latest
-```
+  - RHEL 8.x Linux (Preferred)
+  - skope - 1.2 or latest
+  - openssl 1.11 or latest
+
 
 - Create directory for installation tool downloading
 ```
@@ -175,9 +175,46 @@ cloudctl case launch   --case $OFFLINEDIR/${CASE_ARCHIVE}   \
   --t 1
 ```
 
+- Verify and export the portable registry
+  - Check the images
+  ```
+  curl -k -u $PORTABLE_DOCKER_REGISTRY_USER:$PORTABLE_DOCKER_REGISTRY_PASSWORD https://${PORTABLE_DOCKER_REGISTRY}/v2/_catalog?n=6000 | jq .repositories[]
+  ```
+  - Portable Registry Export
+  ```
+    podman save docker.io/library/registry:2.6 -o $OFFLINEDIR/cpdregistry.tar
+  ```
+
+### Part 2: Copy Images from PortalRegistry to Private Registry
+```
+export PRIVATE_REGISTRY_URL=9.46.199.99:5000
+export PRIVATE_REGISTRY_USER=user
+export PRIVATE_REGISTRY_PASS=pass
+
+# Test the login
+podman login -u $PRIVATE_REGISTRY_USER -p $PRIVATE_REGISTRY_PASS $PRIVATE_REGISTRY_URL --tls-verify=false
+
+# Save private registry credentials
+
+cloudctl case launch   --case $OFFLINEDIR/${CASE_ARCHIVE}   \
+  --inventory $CASE_INVENTORY_SETUP   --action configure-creds-airgap  \
+  --args "--registry $PORTABLE_DOCKER_REGISTRY --user $PORTABLE_DOCKER_REGISTRY_USER --pass $PORTABLE_DOCKER_REGISTRY_PASSWORD" \
+  --tolerance=1
+  
+# Copy images to private registry
+cloudctl case launch \
+  --case ibm-cp-common-services-1.4.0.tgz \
+  --inventory ibmCommonServiceOperatorSetup \
+  --action mirror-images \
+  --args "--fromRegistry $PORTABLE_REGISTRY_URL --registry $LOCAL_REGISTRY_URL --inputDir $OFFLINEDIR"
+  
+```
+
+### Part 2: Installing the Watson Knowledge Catalog
+
 
 ## Custom namespace
-
+```
 cloudctl case launch \
   --case $OFFLINEDIR/${CASE_ARCHIVE} \
   --inventory ${CASE_INVENTORY_SETUP} \
