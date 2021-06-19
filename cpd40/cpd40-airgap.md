@@ -305,10 +305,22 @@ pull_secret=$(echo -n "$REGISTRY_USER:$REGISTRY_PASSWORD" | base64 -w0)
 oc get secret/pull-secret -n openshift-config -o jsonpath='{.data.\.dockerconfigjson}' | base64 -d | sed -e 's|:{|:{"10.17.101.119:5000":{"auth":"'$pull_secret'"\},|' > /tmp/dockerconfig.json
 
 oc set data secret/pull-secret -n openshift-config --from-file=.dockerconfigjson=/tmp/dockerconfig.json
+
+oc get secret/pull-secret -n openshift-config -o jsonpath='{.data.\.dockerconfigjson}' | base64 -d | sed -e 's|:{|:{"api.slues.cp.fyre.ibm.com:5000":{"auth":"'$pull_secret'"\},|' > /tmp/dockerconfig.json
+
+oc set data secret/pull-secret -n openshift-config --from-file=.dockerconfigjson=/tmp/dockerconfig.json
+
 ```
 
 - Create a configmap
+- 
+openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
 
+oc create configmap registry-cas -n openshift-config \
+--from-file=myregistry.corp.com..5000=/etc/certs/certificate.pem
+
+oc patch image.config.openshift.io/cluster \
+  --patch '{"spec":{"additionalTrustedCA":{"name":"registry-cas"}}}' --type=merge
 
 
 
