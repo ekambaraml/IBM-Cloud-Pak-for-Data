@@ -175,71 +175,62 @@ cloudctl case launch  --case $OFFLINEDIR/${CASE_ARCHIVE} \
 
 ```
 
-cloudctl case launch   --case $OFFLINEDIR/ibm-cp-common-services-1.4.0.tgz   \
-  --inventory ibmCommonServiceOperatorSetup   --action mirror-images \
+cloudctl case launch   --case $OFFLINEDIR/ibm-cp-datacore-2.0.0-134.tgz   \
+  --inventory cpdPlatformOperator   \
+  --action mirror-images \
+  --args "--registry $PORTABLE_DOCKER_REGISTRY  --inputDir $OFFLINEDIR" \
+  --t 1
+
+cloudctl case launch   --case $OFFLINEDIR/ibm-cpd-scheduling-1.2.0.tgz   \
+  --inventory schedulerSetup   \
+  --action mirror-images \
   --args "--registry $PORTABLE_DOCKER_REGISTRY  --inputDir $OFFLINEDIR" \
   --t 1
 
 cloudctl case launch   --case $OFFLINEDIR/ibm-cp-common-services-1.4.0.tgz   \
-  --inventory ibmCommonServiceOperatorSetup   --action mirror-images \
+  --inventory ibmCommonServiceOperatorSetup   \
+  --action mirror-images \
   --args "--registry $PORTABLE_DOCKER_REGISTRY  --inputDir $OFFLINEDIR" \
   --t 1
   
-cloudctl case launch   --case $OFFLINEDIR/${CASE_ARCHIVE}   \
-  --inventory $CASE_INVENTORY_SETUP   --action mirror-images \
+cloudctl case launch   --case $OFFLINEDIR/ibm-ccs-1.0.0-749.tgz   \
+  --inventory ccsSetup   \
+  --action mirror-images \
   --args "--registry $PORTABLE_DOCKER_REGISTRY  --inputDir $OFFLINEDIR" \
   --t 1
   
+cloudctl case launch   --case $OFFLINEDIR/ibm-datarefinery-1.0.0-238.tgz   \
+  --inventory datarefinerySetup   \
+  --action mirror-images \
+  --args "--registry $PORTABLE_DOCKER_REGISTRY  --inputDir $OFFLINEDIR" \
+  --t 1
+
+cloudctl case launch   --case $OFFLINEDIR/ibm-db2aaservice-4.0.0-1228.712.tgz   \
+  --inventory db2aaserviceOperatorSetup   \
+  --action mirror-images \
+  --args "--registry $PORTABLE_DOCKER_REGISTRY  --inputDir $OFFLINEDIR" \
+  --t 1
+  
+cloudctl case launch   --case $OFFLINEDIR/ibm-db2uoperator-4.0.0-3731.2361.tgz   \
+  --inventory db2uOperatorSetup   \
+  --action mirror-images \
+  --args "--registry $PORTABLE_DOCKER_REGISTRY  --inputDir $OFFLINEDIR" \
+  --t 1
   
 cloudctl case launch   --case $OFFLINEDIR/ibm-iis-4.0.0-355.tgz   \
-  --inventory $CASE_INVENTORY_SETUP   --action mirror-images \
+  --inventory iisOperator   \
+  --action mirror-images \
   --args "--registry $PORTABLE_DOCKER_REGISTRY  --inputDir $OFFLINEDIR" \
-  --t 1
-
-cloudctl case launch   --case $OFFLINEDIR/ibm-iis-4.0.0-355.tgz   \
-  --inventory $CASE_INVENTORY_SETUP   --action mirror-images \
+  --t 1  
+  
+cloudctl case launch   --case $OFFLINEDIR/ibm-wkc-4.0.0-416.tgz   \
+  --inventory wkcOperatorSetup   \
+  --action mirror-images \
   --args "--registry $PORTABLE_DOCKER_REGISTRY  --inputDir $OFFLINEDIR" \
   --t 1
   
 
-export CASEFILE=ibm-cp-common-services-1.4.0.tgz
-export CASE_INVENTORY=ibmCommonServiceOperatorSetup
-cloudctl case launchn --case $CASEFILE  --inventory $CASE_INVENTORY  --action mirror-images --args "--registry $PORTABLE_REGISTRY_URL --user $PORTABLE_REGISTRY_USER --pass $PORTABLE_REGISTRY_PASS  --inputDir $OFFLINEDIR" --tolerance=1
 
-# datacore
-export CASEFILE=ibm-cp-datacore-2.0.0-134.tgz
-export CASE_INVENTORY=cpdPlatformOperator
-cloudctl case launch --case $CASEFILE  --inventory $CASE_INVENTORY  --action mirror-images --args "--registry $PORTABLE_REGISTRY_URL --user $PORTABLE_REGISTRY_USER --pass $PORTABLE_REGISTRY_PASS  --inputDir $OFFLINEDIR" --tolerance=1
-
-# CCS
-export CASEFILE=ibm-ccs-1.0.0-749.tgz
-export CASE_INVENTORY=ccsSetup
-cloudctl case launch --case $CASEFILE  --inventory $CASE_INVENTORY  --action mirror-images --args "--registry $PORTABLE_REGISTRY_URL --user $PORTABLE_REGISTRY_USER --pass $PORTABLE_REGISTRY_PASS  --inputDir $OFFLINEDIR" --tolerance=1
-
-# DataRefinery
-export CASEFILE=ibm-datarefinery-1.0.0-238.tgz
-export CASE_INVENTORY=datarefinerySetup
-cloudctl case launch --case $CASEFILE  --inventory $CASE_INVENTORY  --action mirror-images --args "--registry $PORTABLE_REGISTRY_URL --user $PORTABLE_REGISTRY_USER --pass $PORTABLE_REGISTRY_PASS  --inputDir $OFFLINEDIR" --tolerance=1
-
-# DB2aaservice
-export CASEFILE=ibm-db2aaservice-4.0.0-1228.712.tgz
-export CASE_INVENTORY=db2aaserviceOperatorSetup
-cloudctl case launch --case $CASEFILE  --inventory $CASE_INVENTORY  --action mirror-images --args "--registry $PORTABLE_REGISTRY_URL --user $PORTABLE_REGISTRY_USER --pass $PORTABLE_REGISTRY_PASS  --inputDir $OFFLINEDIR" --tolerance=1
-
-# DB2UOperator
-export CASEFILE=ibm-db2uoperator-4.0.0-3731.2361.tgz
-export CASE_INVENTORY=db2uOperatorSetup
-cloudctl case launch --case $CASEFILE  --inventory $CASE_INVENTORY  --action mirror-images --args "--registry $PORTABLE_REGISTRY_URL --user $PORTABLE_REGISTRY_USER --pass $PORTABLE_REGISTRY_PASS  --inputDir $OFFLINEDIR" --tolerance=1
-
-# IIS
-export CASEFILE=ibm-iis-4.0.0-355.tgz
-export CASE_INVENTORY=iisOperator
-cloudctl case launch --case $CASEFILE  --inventory $CASE_INVENTORY  --action mirror-images --args "--registry $PORTABLE_REGISTRY_URL --user $PORTABLE_REGISTRY_USER --pass $PORTABLE_REGISTRY_PASS  --inputDir $OFFLINEDIR" --tolerance=1
-
-# WKC
-export CASEFILE=ibm-wkc-4.0.0-416.tgz
-export CASE_INVENTORY=wkcOperatorSetup
-cloudctl case launch --case $CASEFILE  --inventory $CASE_INVENTORY  --action mirror-images --args "--registry $PORTABLE_REGISTRY_URL --user $PORTABLE_REGISTRY_USER --pass $PORTABLE_REGISTRY_PASS  --inputDir $OFFLINEDIR" --tolerance=1
 ```
 
 - Verify and export the portable registry
@@ -263,17 +254,18 @@ podman login -u $PRIVATE_REGISTRY_USER -p $PRIVATE_REGISTRY_PASS $PRIVATE_REGIST
 
 # Save private registry credentials
 
-cloudctl case launch   --case $OFFLINEDIR/${CASE_ARCHIVE}   \
-  --inventory $CASE_INVENTORY_SETUP   --action configure-creds-airgap  \
+cloudctl case launch   --case $OFFLINEDIR/ibm-cp-datacore-2.0.0-134.tgz    \
+  --inventory cpdPlatformOperator   --action configure-creds-airgap  \
   --args "--registry $PRIVATE_REGISTRY_URL --user $PRIVATE_REGISTRY_USER --pass $PRIVATE_REGISTRY_PASS" \
   --tolerance=1
   
 # Copy images to private registry
 cloudctl case launch \
-  --case $OFFLINEDIR/${CASE_ARCHIVE}  \
-  --inventory $CASE_INVENTORY_SETUP \
+  --case $OFFLINEDIR/ibm-cp-datacore-2.0.0-134.tgz  \
+  --inventory cpdPlatformOperator \
   --action mirror-images \
-  --args "--fromRegistry $PORTABLE_REGISTRY_URL --registry $PRIVATE_REGISTRY_URL --inputDir $OFFLINEDIR"
+  --args "--fromRegistry $PORTABLE_DOCKER_REGISTRY  --registry $PRIVATE_REGISTRY_URL --inputDir $OFFLINEDIR" \
+  --t 1
   
 ```
 
@@ -283,8 +275,8 @@ cloudctl case launch \
 ## Custom namespace
 ```
 cloudctl case launch \
-  --case $OFFLINEDIR/${CASE_ARCHIVE} \
-  --inventory ${CASE_INVENTORY_SETUP} \
+  --case $OFFLINEDIR/ibm-cp-datacore-2.0.0-134.tgz \
+  --inventory cpdPlatformOperator \
   --action configureClusterAirgap \
   --namespace common-service \
   --args "--registry $PORTABLE_DOCKER_REGISTRY --inputDir $OFFLINEDIR" -t 1
