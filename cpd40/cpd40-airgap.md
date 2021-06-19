@@ -271,6 +271,19 @@ cloudctl case launch \
 
 ### Part 2: Installing the Watson Knowledge Catalog
 
+#### Pre-Installation tasks
+1. Installing OpenShift Container Platform
+2. Setting up Persistent Storage
+3. Creating Project namespaces
+4. Obtainting prerequisites
+5. Mirror images to you container registry
+6. Configuring your cluster to pull Cloud Pak for Data images
+7. Installing Cloud Pak foundational services
+8. Creating operator subscriptions
+9. Creating Custom sercurity context constraints for services
+10. Changing required node settings
+
+
 
 ## Custom namespace
 ```
