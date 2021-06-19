@@ -21,6 +21,7 @@ https://raw.githubusercontent.com/IBM/cloud-pak/ | Installer
 Permissions | Roles
 -----|----
 OpenShift Cluster Admin | Downloading Product images, Installing
+Project Admins | An administrator of the following projects: 1. The IBM Cloud Pak for Data platform operator project (cpd-operators), 2. The project where you plan to install Cloud Pak for Data
 
 ### Getting Product and Installers
    - This section of the steps should be run on a internet facing client machine to obtain the tools and images required for the installations.
