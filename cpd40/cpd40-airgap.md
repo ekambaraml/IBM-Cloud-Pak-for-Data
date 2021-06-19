@@ -322,6 +322,25 @@ oc create configmap registry-cas -n openshift-config \
 oc patch image.config.openshift.io/cluster \
   --patch '{"spec":{"additionalTrustedCA":{"name":"registry-cas"}}}' --type=merge
 
+export PRIVATE_REGISTRY=api.slues.cp.fyre.ibm.com:5000
+cat <<EOF |oc apply -f -
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageContentSourcePolicy
+metadata:
+  name: cloud-pak-for-data-mirror
+spec:
+  repositoryDigestMirrors:
+  - mirrors:
+    - ${PRIVATE_REGISTRY}
+    source: quay.io/opencloudio
+  - mirrors:
+    - ${PRIVATE_REGISTRY}
+    source: cp.icr.io/cp
+  - mirrors:
+    - ${PRIVATE_REGISTRY}
+    source: icr.io/cpopen
+EOF
+
 
 
 
