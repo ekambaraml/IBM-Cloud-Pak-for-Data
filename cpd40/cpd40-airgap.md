@@ -285,6 +285,34 @@ cloudctl case launch \
 10. Changing required node settings
 
 
+- Create projects
+  - $ oc new-project common-service
+  - $ oc new-project zen
+
+- Create Global pullsecret for local registry
+```
+oc extract secret/pull-secret -n openshift-config
+.dockerconfigjson
+
+export REGISTRY_USER=admin
+export REGISTRY_PASSWORD=adminpass
+export REGISTRY_SERVER=10.17.101.119:5000
+
+
+
+pull_secret=$(echo -n "$REGISTRY_USER:$REGISTRY_PASSWORD" | base64 -w0)
+
+oc get secret/pull-secret -n openshift-config -o jsonpath='{.data.\.dockerconfigjson}' | base64 -d | sed -e 's|:{|:{"10.17.101.119:5000":{"auth":"'$pull_secret'"\},|' > /tmp/dockerconfig.json
+
+oc set data secret/pull-secret -n openshift-config --from-file=.dockerconfigjson=/tmp/dockerconfig.json
+```
+
+- Create a configmap
+
+
+
+
+
 
 ## Custom namespace
 ```
