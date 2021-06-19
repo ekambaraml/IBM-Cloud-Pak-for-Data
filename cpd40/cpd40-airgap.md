@@ -23,6 +23,13 @@ Permissions | Roles
 OpenShift Cluster Admin | Downloading Product images, Installing
 
 ### Getting Product and Installers
+The following commands are run from a internet facing clients with access to IBM repository urls to download the products.
+
+- Client Machine Requirements
+```
+skope - 1.2 or latest
+openssl 1.11 or latest
+```
 
 - Create directory for installation tool downloading
 ```
@@ -47,13 +54,24 @@ oc version
 ```
 
 - Cloud Pak for Data
-
+```
 OFFLINEDIR= ${HOMEDIR}/offline
 mkdir -p  ${OFFLINEDIR}
 cd ${OFFLINEDIR}
 
-get https://github.com/IBM/cloud-pak/blob/master/repo/case/ibm-cp-common-services-1.4.0.tgz?raw=true -O ibm-cp-common-services-1.4.0.tgz
+# IBM Foundation Services
+(Cloud Pak for Data, IBM Foundation Service and CPD Schduling)
 wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-cp-datacore/2.0.0-134/ibm-cp-datacore-2.0.0-134.tgz
+get https://github.com/IBM/cloud-pak/blob/master/repo/case/ibm-cp-common-services-1.4.0.tgz?raw=true -O ibm-cp-common-services-1.4.0.tgz
+wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-cpd-scheduling/1.2.0/ibm-cpd-scheduling-1.2.0.tgz
+
+cloudctl case save --case ${OFFLINEDIR}/ibm-cp-datacore-2.0.0-134.tgz --outputdir ${OFFLINEDIR}  -t 1
+cloudctl case save --case ${OFFLINEDIR}/ibm-cp-common-services-1.4.0.tgz  --outputdir ${OFFLINEDIR}  -t 1
+cloudctl case save --case ${OFFLINEDIR}/ibm-cpd-scheduling-1.2.0.tgz --outputdir ${OFFLINEDIR}  -t 1
+
+# Watson Knowledge Catelog and required cases
+(Common Core Services, Data Refinery, DB2U Operator, DB2 as a Service, IBM Information Server, Watson Knowledge Catalog)
+
 wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-ccs/1.0.0-749/ibm-ccs-1.0.0-749.tgz
 wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-datarefinery/1.0.0-238/ibm-datarefinery-1.0.0-238.tgz
 wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-db2uoperator/4.0.0-3731.2361/ibm-db2uoperator-4.0.0-3731.2361.tgz
@@ -61,81 +79,74 @@ wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-db2aaservice/4.0.0
 wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-iis/4.0.0-355/ibm-iis-4.0.0-355.tgz
 wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-wkc/4.0.0-416/ibm-wkc-4.0.0-416.tgz
 
+cloudctl case save --case ${OFFLINEDIR}/ibm-ccs-1.0.0-749.tgz --outputdir ${OFFLINEDIR}  -t 1
+cloudctl case save --case ${OFFLINEDIR}/ibm-datarefinery-1.0.0-238.tgz --outputdir ${OFFLINEDIR}  -t 1
+cloudctl case save --case ${CASEDIR}/ibm-db2uoperator-4.0.0-3731.2361.tgz --outputdir ${OFFLINEDIR}  -t 1
+cloudctl case save --case ${OFFLINEDIR}/ibm-db2aaservice-4.0.0-1228.749.tgz  --outputdir ${OFFLINEDIR}  -t 1
+cloudctl case save --case ${OFFLINEDIR}/ibm-iis-4.0.0-355.tgz --outputdir ${OFFLINEDIR}  -t 1
+cloudctl case save --case ${OFFLINEDIR}/ibm-wkc-4.0.0-416.tgz --outputdir ${OFFLINEDIR}  -t 1
+```
 
 
+- Portabl Registry Mirror Setup
+Please update the following values based on your environments
+
+```
 export CASE_NAME=ibm-wkc
 export CASE_VERSION=4.0.0-416
 export CASE_ARCHIVE=${CASE_NAME}-${CASE_VERSION}.tgz
 export CASE_INVENTORY_SETUP=wkcOperatorSetup
-export OFFLINEDIR=/root/offline
+
 export CASECTL_RESOLVE_DEPENDENCIES=false
 export USE_SKOPEO=true
-export PORTABLE_DOCKER_REGISTRY_HOST=api.wkc-devopsbox5.cp.fyre.ibm.com
+export PORTABLE_DOCKER_REGISTRY_HOST=10.17.5.154
 export PORTABLE_DOCKER_REGISTRY_PORT=5000
 export PORTABLE_DOCKER_REGISTRY=$PORTABLE_DOCKER_REGISTRY_HOST:$PORTABLE_DOCKER_REGISTRY_PORT
 export PORTABLE_DOCKER_REGISTRY_USER=admin
 export PORTABLE_DOCKER_REGISTRY_PASSWORD=adminpass
 export PORTABLE_DOCKER_REGISTRY_PATH=/etc/docker/registry
+
+
+export IBM_REGISTRY_USER=cp
+export IBM_REGISTRY_TOKEN=<TBD>
+export IBM_REGISTRY=us.icr.io
+
+```
+
+- Initialise portable Registry container
+```
 cloudctl case launch \
   --case $OFFLINEDIR/${CASE_ARCHIVE} \
   --inventory $CASE_INVENTORY_SETUP \
   --action configure-creds-airgap \
   --args "--registry $PORTABLE_DOCKER_REGISTRY --user $PORTABLE_DOCKER_REGISTRY_USER --pass $PORTABLE_DOCKER_REGISTRY_PASSWORD" -t 1
+  
 cloudctl case launch \
  --case $OFFLINEDIR/${CASE_ARCHIVE} \
  --inventory $CASE_INVENTORY_SETUP \
  --action init-registry \
  --args "--registry $PORTABLE_DOCKER_REGISTRY_HOST --user $PORTABLE_DOCKER_REGISTRY_USER --pass $PORTABLE_DOCKER_REGISTRY_PASSWORD --dir $PORTABLE_DOCKER_REGISTRY_PATH" -t 1
+ 
 cloudctl case launch \
  --case $OFFLINEDIR/${CASE_ARCHIVE} \
  --inventory $CASE_INVENTORY_SETUP \
  --action start-registry \
  --args "--registry $PORTABLE_DOCKER_REGISTRY_HOST --port $PORTABLE_DOCKER_REGISTRY_PORT --user $PORTABLE_DOCKER_REGISTRY_USER --pass $PORTABLE_DOCKER_REGISTRY_PASSWORD --dir $PORTABLE_DOCKER_REGISTRY_PATH" -t 1
+ ```
  
- 
-- Tools
-sudo yum install httpd-tools podman skopeo jq -y
 
-yum install python3
-alternatives --set python /usr/bin/python3
-pip3 install pyyaml
-
-podman pull docker.io/library/registry:2.6
-podman tag localhost/registry:2.6 docker.io/library/registry:2.6
-podman save -o registry.tar docker.io/library/registry:2.6
-podman load --input /tmp/registry.tar
-
+- Save Credentials for Portable Registry
+You need to Run the following commands one per entitled registry (cp.icr.io, c
 
 ```
-# Download Cases
-wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-cpd-scheduling/1.2.0/ibm-cpd-scheduling-1.2.0.tgz
-
-
-# IBM Foundataion and CPD Zen
-ZEN_CASES="ibm-cp-datacore-2.0.0-134.tgz ibm-cp-common-services-1.4.0.tgz ibm-cpd-scheduling-1.2.0.tgz"
-for CASE_FILE in $ZEN_CASES
-do
-  echo "cloudctl case save --case $OFFLINEDIR/${CASE_FILE}  --outputdir $OFFLINEDIR --tolerance=1"
-done
-
- 
-# WKC Service
-
-WKC_CASES="ibm-ccs-1.0.0-749.tgz  ibm-datarefinery-1.0.0-238.tgz ibm-db2uoperator-4.0.0-3731.2361.tgz ibm-db2aaservice-4.0.0-1228.749.tgz ibm-iis-4.0.0-355.tgz ibm-wkc-4.0.0-416.tgz"
-for CASE_FILE in $WKC_CASES
-do
- echo "cloudctl case save --case $OFFLINEDIR/${CASE_FILE}  --outputdir $OFFLINEDIR --tolerance=1"
-done
-
-
-- You need to Run the following commands one per registry (even if you more services)
-- Save Credentials for Portable Registry
 cloudctl case launch   --case $OFFLINEDIR/${CASE_ARCHIVE}   \
   --inventory $CASE_INVENTORY_SETUP   --action configure-creds-airgap  \
   --args "--registry $PORTABLE_DOCKER_REGISTRY --user $PORTABLE_DOCKER_REGISTRY_USER --pass $PORTABLE_DOCKER_REGISTRY_PASSWORD" \
   --tolerance=1
 
 - Credentials for ic.io
+# Set the IBM Registry Entitlement token before running the command, This need be obtained from myibm.ibm.com
+
 cloudctl case launch --case /root/offline/ibm-wkc-4.0.0-416.tgz \
   --inventory wkcOperatorSetup  --action configure-creds-airgap \
   --args "--registry ${IBM_REGISTRY} --user ${IBM_REGISTRY_USER} --pass ${IBM_REGISTRY_TOKEN}"
@@ -146,20 +157,17 @@ cloudctl case launch  --case $OFFLINEDIR/${CASE_ARCHIVE} \
   --args "--registry cp.icr.io  --user ${IBM_REGISTRY_USER} --pass ${IBM_REGISTRY_TOKEN}" \
   -t 1
 
-- Mirror Registry
-- You need to Run only, it will create mirror for all cases
+```
 
+- Run the mirroring
+You need to run the Mirror one time, this dowdload and transfer all images into local portalble registry.
+
+```
 cloudctl case launch   --case $OFFLINEDIR/${CASE_ARCHIVE}   \
   --inventory $CASE_INVENTORY_SETUP   --action mirror-images \
   --args "--registry $PORTABLE_DOCKER_REGISTRY  --inputDir $OFFLINEDIR" \
   --t 1
-
 ```
-**Bastion Inside the Networ**k
-
-
-Setup a Private Registry
-
 
 
 ## Custom namespace
