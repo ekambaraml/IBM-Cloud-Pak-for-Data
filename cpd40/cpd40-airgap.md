@@ -37,6 +37,9 @@ Project Admins | An administrator of the following projects: 1. The IBM Cloud Pa
 export HOMEDIR=/root/cpd40
 mkdir -p  ${HOMEDIR}
 cd ${HOMEDIR}
+export OFFLINEDIR=${HOMEDIR}/offline
+mkdir -p  ${OFFLINEDIR}
+cd ${OFFLINEDIR}
 ```
 
 - IBM Cloud Pak installer
@@ -54,7 +57,7 @@ cp kubectl /usr/bin
 oc version
 
 # Install tools
-sudo yum install httpd-tools podman skopeo jq -y
+sudo yum install httpd-tools podman ca-certificates openssl skopeo jq -y
 
 yum install python3
 alternatives --set python /usr/bin/python3
@@ -64,20 +67,20 @@ pip3 install pyyaml
 
 - Cloud Pak for Data
 ```
-export OFFLINEDIR=${HOMEDIR}/offline
-mkdir -p  ${OFFLINEDIR}
-cd ${OFFLINEDIR}
+
 export CASECTL_RESOLVE_DEPENDENCIES=false
 
 # IBM Foundation Services
 # (Cloud Pak for Data, IBM Foundation Service and CPD Schduling)
 wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-cp-datacore/2.0.0-134/ibm-cp-datacore-2.0.0-134.tgz
-get https://github.com/IBM/cloud-pak/blob/master/repo/case/ibm-cp-common-services-1.4.0.tgz?raw=true -O ibm-cp-common-services-1.4.0.tgz
+wget https://github.com/IBM/cloud-pak/blob/master/repo/case/ibm-cp-datacore-1.3.9.tgz?raw=true -O ibm-cp-datacore-1.3.9.tgz
+wget https://github.com/IBM/cloud-pak/blob/master/repo/case/ibm-cp-common-services-1.4.0.tgz?raw=true -O ibm-cp-common-services-1.4.0.tgz
 wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-cpd-scheduling/1.2.0/ibm-cpd-scheduling-1.2.0.tgz
 
-cloudctl case save --case ${OFFLINEDIR}/ibm-cp-datacore-2.0.0-134.tgz --outputdir ${OFFLINEDIR}  -t 1
-cloudctl case save --case ${OFFLINEDIR}/ibm-cp-common-services-1.4.0.tgz  --outputdir ${OFFLINEDIR}  -t 1
-cloudctl case save --case ${OFFLINEDIR}/ibm-cpd-scheduling-1.2.0.tgz --outputdir ${OFFLINEDIR}  -t 1
+cloudctl case save --case ${OFFLINEDIR}/ibm-cp-datacore-2.0.0-134.tgz --outputdir ${OFFLINEDIR}  --tolerance=1
+
+cloudctl case save --case ${OFFLINEDIR}/ibm-cp-common-services-1.4.0.tgz  --outputdir ${OFFLINEDIR}  --tolerance=1
+cloudctl case save --case ${OFFLINEDIR}/ibm-cpd-scheduling-1.2.0.tgz --outputdir ${OFFLINEDIR}  --tolerance=1
 
 # Watson Knowledge Catelog and required cases
 # (Common Core Services, Data Refinery, DB2U Operator, DB2 as a Service, IBM Information Server, Watson Knowledge Catalog)
@@ -89,12 +92,12 @@ wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-db2aaservice/4.0.0
 wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-iis/4.0.0-355/ibm-iis-4.0.0-355.tgz
 wget http://icpfs1.svl.ibm.com/zen/cp4d-builds/4.0.0/gmc1/ibm-wkc/4.0.0-416/ibm-wkc-4.0.0-416.tgz
 
-cloudctl case save --case ${OFFLINEDIR}/ibm-ccs-1.0.0-749.tgz --outputdir ${OFFLINEDIR}  -t 1
-cloudctl case save --case ${OFFLINEDIR}/ibm-datarefinery-1.0.0-238.tgz --outputdir ${OFFLINEDIR}  -t 1
-cloudctl case save --case ${OFFLINEDIR}/ibm-db2uoperator-4.0.0-3731.2361.tgz --outputdir ${OFFLINEDIR}  -t 1
-cloudctl case save --case ${OFFLINEDIR}/ibm-db2aaservice-4.0.0-1228.749.tgz  --outputdir ${OFFLINEDIR}  -t 1
-cloudctl case save --case ${OFFLINEDIR}/ibm-iis-4.0.0-355.tgz --outputdir ${OFFLINEDIR}  -t 1
-cloudctl case save --case ${OFFLINEDIR}/ibm-wkc-4.0.0-416.tgz --outputdir ${OFFLINEDIR}  -t 1
+cloudctl case save --case ${OFFLINEDIR}/ibm-ccs-1.0.0-749.tgz --outputdir ${OFFLINEDIR}  --tolerance=1
+cloudctl case save --case ${OFFLINEDIR}/ibm-datarefinery-1.0.0-238.tgz --outputdir ${OFFLINEDIR}  --tolerance=1
+cloudctl case save --case ${OFFLINEDIR}/ibm-db2uoperator-4.0.0-3731.2361.tgz --outputdir ${OFFLINEDIR}  --tolerance=1
+cloudctl case save --case ${OFFLINEDIR}/ibm-db2aaservice-4.0.0-1228.749.tgz  --outputdir ${OFFLINEDIR}  --tolerance=1
+cloudctl case save --case ${OFFLINEDIR}/ibm-iis-4.0.0-355.tgz --outputdir ${OFFLINEDIR}  --tolerance=1
+cloudctl case save --case ${OFFLINEDIR}/ibm-wkc-4.0.0-416.tgz --outputdir ${OFFLINEDIR}  --tolerance=1
 # end of download
 
 ```
@@ -124,22 +127,25 @@ export IBM_REGISTRY=us.icr.io
 - Initialise portable Registry container
 ```
 cloudctl case launch \
-  --case $OFFLINEDIR/${CASE_ARCHIVE} \
-  --inventory $CASE_INVENTORY_SETUP \
+  --case $OFFLINEDIR/ibm-cp-common-services-1.4.0.tgz \
+  --inventory ibmCommonServiceOperatorSetup \
   --action configure-creds-airgap \
-  --args "--registry $PORTABLE_DOCKER_REGISTRY --user $PORTABLE_DOCKER_REGISTRY_USER --pass $PORTABLE_DOCKER_REGISTRY_PASSWORD" -t 1
+  --args "--registry $PORTABLE_DOCKER_REGISTRY --user $PORTABLE_DOCKER_REGISTRY_USER --pass $PORTABLE_DOCKER_REGISTRY_PASSWORD" \
+  --tolerance=1
   
 cloudctl case launch \
- --case $OFFLINEDIR/${CASE_ARCHIVE} \
- --inventory $CASE_INVENTORY_SETUP \
+ --case $OFFLINEDIR/ibm-cp-common-services-1.4.0.tgz \
+ --inventory ibmCommonServiceOperatorSetup \
  --action init-registry \
- --args "--registry $PORTABLE_DOCKER_REGISTRY_HOST --user $PORTABLE_DOCKER_REGISTRY_USER --pass $PORTABLE_DOCKER_REGISTRY_PASSWORD --dir $PORTABLE_DOCKER_REGISTRY_PATH" -t 1
+ --args "--registry $PORTABLE_DOCKER_REGISTRY_HOST --user $PORTABLE_DOCKER_REGISTRY_USER --pass $PORTABLE_DOCKER_REGISTRY_PASSWORD --dir $PORTABLE_DOCKER_REGISTRY_PATH" \
+ --tolerance=1
  
 cloudctl case launch \
- --case $OFFLINEDIR/${CASE_ARCHIVE} \
- --inventory $CASE_INVENTORY_SETUP \
+ --case $OFFLINEDIR/ibm-cp-common-services-1.4.0.tgz \
+ --inventory ibmCommonServiceOperatorSetup \
  --action start-registry \
- --args "--registry $PORTABLE_DOCKER_REGISTRY_HOST --port $PORTABLE_DOCKER_REGISTRY_PORT --user $PORTABLE_DOCKER_REGISTRY_USER --pass $PORTABLE_DOCKER_REGISTRY_PASSWORD --dir $PORTABLE_DOCKER_REGISTRY_PATH" -t 1
+ --args "--registry $PORTABLE_DOCKER_REGISTRY_HOST --port $PORTABLE_DOCKER_REGISTRY_PORT --user $PORTABLE_DOCKER_REGISTRY_USER --pass $PORTABLE_DOCKER_REGISTRY_PASSWORD --dir $PORTABLE_DOCKER_REGISTRY_PATH" \
+ --tolerance=1
  
  # verify the local registry
  podman login -u $PORTABLE_DOCKER_REGISTRY_USER -p $PORTABLE_DOCKER_REGISTRY_PASSWORD $PORTABLE_DOCKER_REGISTRY --tls-verify=false
@@ -151,6 +157,10 @@ cloudctl case launch \
 You need to Run the following commands one per entitled registry (cp.icr.io, c
 
 ```
+
+export CASE_ARCHIVE=ibm-cp-common-services-1.4.0.tgz
+export CASE_INVENTORY_SETUP=ibmCommonServiceOperatorSetup
+
 cloudctl case launch   --case $OFFLINEDIR/${CASE_ARCHIVE}   \
   --inventory $CASE_INVENTORY_SETUP   --action configure-creds-airgap  \
   --args "--registry $PORTABLE_DOCKER_REGISTRY --user $PORTABLE_DOCKER_REGISTRY_USER --pass $PORTABLE_DOCKER_REGISTRY_PASSWORD" \
@@ -160,14 +170,15 @@ cloudctl case launch   --case $OFFLINEDIR/${CASE_ARCHIVE}   \
 # Set the IBM Registry Entitlement token before running the command, This need be obtained from myibm.ibm.com
 
 cloudctl case launch --case $OFFLINEDIR/${CASE_ARCHIVE} \
-  --inventory wkcOperatorSetup  --action configure-creds-airgap \
-  --args "--registry ${IBM_REGISTRY} --user ${IBM_REGISTRY_USER} --pass ${IBM_REGISTRY_TOKEN}"
+  --inventory $CASE_INVENTORY_SETUP  --action configure-creds-airgap \
+  --args "--registry ${IBM_REGISTRY} --user ${IBM_REGISTRY_USER} --pass ${IBM_REGISTRY_TOKEN}" \
+  --tolerance=1
 
 - Credentials for cp.ic.io
 cloudctl case launch  --case $OFFLINEDIR/${CASE_ARCHIVE} \
   --inventory $CASE_INVENTORY_SETUP --action configure-creds-airgap \
   --args "--registry cp.icr.io  --user ${IBM_REGISTRY_USER} --pass ${IBM_REGISTRY_TOKEN}" \
-  -t 1
+   --tolerance=1
 
 ```
 
@@ -180,7 +191,7 @@ cloudctl case launch   --case $OFFLINEDIR/ibm-cp-datacore-2.0.0-134.tgz   \
   --inventory cpdPlatformOperator   \
   --action mirror-images \
   --args "--registry $PORTABLE_DOCKER_REGISTRY  --inputDir $OFFLINEDIR" \
-  --t 1
+  --tolerance=1
 
 cloudctl case launch   --case $OFFLINEDIR/ibm-cpd-scheduling-1.2.0.tgz   \
   --inventory schedulerSetup   \
@@ -311,7 +322,7 @@ oc get secret/pull-secret -n openshift-config -o jsonpath='{.data.\.dockerconfig
 oc set data secret/pull-secret -n openshift-config --from-file=.dockerconfigjson=/tmp/dockerconfig.json
 
 ```
-
+```
 - Create a configmap
 - 
 openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
@@ -341,9 +352,23 @@ spec:
     source: icr.io/cpopen
 EOF
 
+```
 
 
-
+cloudctl case launch \
+  --case ${OFFLINEDIR}/ibm-cp-common-services-1.4.0.tgz \
+  --inventory ibmCommonServiceOperatorSetup \
+  --namespace openshift-marketplace \
+  --action install-catalog \
+    --args "--registry ${PRIVATE_REGISTRY} --inputDir ${OFFLINEDIR} --recursive"
+    
+cloudctl case launch \
+  --case ${OFFLINEDIR}/ibm-cpd-scheduling-1.2.0.tgz \
+  --inventory schedulerSetup \
+  --namespace openshift-marketplace \
+  --action install-catalog \
+    --args "--registry ${PRIVATE_REGISTRY} --inputDir ${OFFLINEDIR} --recursive"
+    
 
 ## Custom namespace
 ```
