@@ -494,13 +494,16 @@ EOF
 ```
 
 ##### Check the status
+```
 oc get CCS ccs-cr -o jsonpath='{.status.ccsStatus} {"\n"}'
 oc get DataRefinery datarefinery-sample -o jsonpath='{.status.datarefineryStatus} {"\n"}'
 oc get ws ws-cr -o jsonpath='{.status.wsStatus} {"\n"}'
-
+```
 #### Get the URL and Password
+``
 oc get ZenService lite-cr -o jsonpath="{.status.url}{'\n'}"
 
 Extract default password:
 
 oc extract secret/admin-user-details --keys=initial_admin_password --to=-
+``
