@@ -1,5 +1,5 @@
 
-13.0 Installing Watson Studio
+## 13.0 Installing Watson Studio
 
 
 #### 13.1 Save the Watson Studio CASE
@@ -19,15 +19,17 @@ cloudctl case launch \
 
 #### 13.3 Service CatalogSource
 
+```
 cloudctl case launch \
   --case ${OFFLINEDIR}/ibm-wsl-2.0.0.tgz \
   --inventory wslSetup \
   --namespace openshift-marketplace \
   --action install-catalog \
     --args "--registry ${PRIVATE_REGISTRY} --inputDir ${OFFLINEDIR} --recursive"
-    
-#### 13.4 Service Subscription
+```
 
+#### 13.4 Service Subscription
+```
 cat <<EOF |oc apply -f -
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
@@ -42,9 +44,10 @@ spec:
   source: ibm-cpd-ws-operator-catalog
   sourceNamespace: openshift-marketplace
 EOF
+```
 
 #### 13.5 Watson Studio CRD Creation
-
+```
 cat <<EOF |oc apply -f -
 apiVersion: ws.cpd.ibm.com/v1beta1
 kind: WS
@@ -60,3 +63,4 @@ spec:
   storageVendor: ""
   storageClass: ${STORAGE_CLASS}                
 EOF
+```
