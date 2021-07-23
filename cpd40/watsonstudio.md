@@ -489,7 +489,6 @@ spec:
     accept: true
     license: ${CPD_LICENSE}
   version: 4.0.0
-  storageVendor: ""
   storageClass: ${STORAGE_CLASS}                
 EOF
 ```
