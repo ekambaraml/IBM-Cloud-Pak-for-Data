@@ -492,3 +492,8 @@ spec:
   storageClass: ${STORAGE_CLASS}                
 EOF
 ```
+
+##### Check the status
+oc get CCS ccs-cr -o jsonpath='{.status.ccsStatus} {"\n"}'
+oc get DataRefinery datarefinery-sample -o jsonpath='{.status.datarefineryStatus} {"\n"}'
+oc get ws ws-cr -o jsonpath='{.status.wsStatus} {"\n"}'
