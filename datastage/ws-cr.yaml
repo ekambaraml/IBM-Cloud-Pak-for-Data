@@ -1,0 +1,13 @@
+apiVersion: ws.cpd.ibm.com/v1beta1
+kind: WS
+metadata:
+  name: ws-cr
+  namespace: cpd
+spec:
+  docker_registry_prefix: cp.icr.io/cp/cpd
+  license:
+    accept: true
+    license: Enterprise
+  version: 4.0.0
+  storageVendor: ""
+  storageClass: managed-nfs-storage

@@ -1,0 +1,13 @@
+apiVersion: databases.cpd.ibm.com/v1
+kind: Db2aaserviceService
+metadata:
+  name: db2aaservice-cr
+spec:
+  version: "4.0.0"
+  size: small
+  scaleConfig: small
+  storage_class_name: managed-nfs-storage
+  storageClass: managed-nfs-storage
+  storageOverride:
+  license:
+    accept: true

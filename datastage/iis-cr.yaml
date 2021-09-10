@@ -1,0 +1,18 @@
+apiVersion: iis.cpd.ibm.com/v1alpha1
+kind: IIS
+metadata:
+  name: iis-cr
+spec:
+  version: "4.0.0"
+  size: small
+  scaleConfig: small
+  storage_class_name: managed-nfs-storage
+  storageClass: managed-nfs-storage
+  storageOverride:
+  license:
+    license: Enterprise
+    accept: true
+  docker_registry_prefix: cp.icr.io/cp/cpd
+  use_dynamic_provisioning: true
+  cert_manager_enabled: true
+  # iis_db2u_set_kernel_params: True     # If you are using an IBM Red Hat OpenShift environment, remove the comment tagging from the beginning of the line.

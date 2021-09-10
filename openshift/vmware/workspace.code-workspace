@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../ibmcloudpaks"
+		},
+		{
+			"path": "../../../DataFabric"
+		},
+		{
+			"path": "../../../CPD40-Developments"
+		}
+	],
+	"settings": {}
+}
