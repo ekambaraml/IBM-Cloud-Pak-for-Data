@@ -105,3 +105,21 @@ worker2.cx-norfolks.cp.fyre.ibm.com   Ready                      worker   20h   
 ```
 
   
+
+
+
+
+
+```
+cat <<EOF |oc apply -f -
+apiVersion: operator.ibm.com/v1alpha1
+kind: OperandRequest
+metadata:
+  name: empty-request
+  namespace: cpd        # Replace with the project where you will install Cloud Pak for Data
+spec:
+  requests: []
+EOF
+```
+
+
