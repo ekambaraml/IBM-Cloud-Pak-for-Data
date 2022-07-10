@@ -1,8 +1,7 @@
-# Deploying cloud pak for data 4.5 on self managed openshift cluster in on-perm environment
+# Deploying cloud pak for data 4.5 in a self managed openshift cluster
 
 Cloud Pak for data is a comprehensive Enterprise level datafabric and datascience platform. 
 
-[TOC]
 
 ### 1.0 Deployment Planning
 
@@ -68,9 +67,10 @@ graph LR
     
     Hardware-Sizing --> Storage-Planning
     Storage-Planning --> OpenShift[OpenShift Install]
+    CPD-Licensing -->  Networking
+    Networking --> OpenShift
     OpenShift --> NodeSettings
-    NodeSettings --> Networking
-    Networking --> CPD-Licensing
+ 
     CPD-Licensing --> Deploy-CloudPakfordata
     Deploy-CloudPakfordata --> PostInstall
     PostInstall-->Day2Ops
@@ -90,24 +90,6 @@ graph LR
 ```
 
 
-```mermaid
-flowchart TD;
-    Deploy-CloudPakfordata --> ControlPlane
-    Deploy-CloudPakfordata --> WatsonStudio
-    Deploy-CloudPakfordata --> WatsonMachineLearning
-```
-
-
-```mermaid
-flowchart TD;
-    Day2Ops -->LDAP-SAML
-    Day2Ops -->BRDR[Backup/Restore, DR]
-    Day2Ops -->HealthCheck
-    Day2Ops -->Performance
-    Day2Ops -->Monitoring[Monitoring and Alerts Integration]
-    Day2Ops -->Upgrades
-
-```
 ### 2.0 Client Setup
 
 #### 2.1 Environment setup
