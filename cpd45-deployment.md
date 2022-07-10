@@ -96,12 +96,14 @@ graph LR
     subgraph Architecture[Planning and Architecture]
     Planning --> Hardware-Sizing
     Planning --> Storage-Planning
+    Planning --> Networking
+    Planning --> SoftwareComponents
     Planning --> CPD-Licensing
-    Planning -->  Networking
-    Hardware-Sizing --> PlanningReadines
-    Storage-Planning --> PlanningReadines
-    Networking --> PlanningReadines
-    CPD-Licensing --> PlanningReadines
+    Hardware-Sizing --> PlanningReadines[Deployment Architecture]
+    Storage-Planning --> PlanningReadines[Deployment Architecture]
+    Networking --> PlanningReadines[Deployment Architecture]
+    SoftwareComponents --> PlanningReadines[Deployment Architecture]
+    CPD-Licensing --> PlanningReadines[Deployment Architecture]
     end
     
     subgraph OCP[Configuring OpenShift Cluster]
