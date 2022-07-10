@@ -90,25 +90,37 @@ graph LR
     Hardware-Sizing --> Storage-Planning
     Storage-Planning --> CPD-Licensing
     CPD-Licensing -->  Networking
-    Networking --> OpenShift
-    OpenShift --> NodeSettings
-    NodeSettings --> Deploy-CloudPakfordata
-    Deploy-CloudPakfordata --> PostInstall
+    Networking --> OpenShift[Build OpenShift Cluster]
+    CPDReadiness --> PostInstall
     PostInstall-->Day2Ops
     
-    subgraph OCP[Building OpenShift Cluster]
+    subgraph OCP[Configuring OpenShift Cluster]
+    OpenShift --> NodeSettings
+    OpenShift --> StorageProvisioner
+    OpenShift --> GlobalPullSecrets
     NodeSettings --> CRIO[Crio Settings]
     NodeSettings --> Kernel[Kernel Parameter]
     NodeSettings --> PrivateRegistry
-    NodeSettings --> GlobalPullSecrets
+
+    CRIO[Crio Settings] -->OCPReadiness
+    Kernel[Kernel Parameter] -->OCPReadiness
+    PrivateRegistry  -->OCPReadiness
+    GlobalPullSecrets   -->OCPReadiness
+    StorageProvisioner   -->OCPReadiness
     end
     
-    subgraph OLM[CPD OLM Install]
+    OCPReadiness  --> Deploy-CloudPakfordata
+    subgraph OLM[Installing Cloud Pak for Data]
     Deploy-CloudPakfordata -->|1| Foundation[IBM Foundational Services]
     Deploy-CloudPakfordata -->|2| Operators[Operator Subscriptions]
     Deploy-CloudPakfordata -->|3| ControlPlane
     Deploy-CloudPakfordata -->|4| WatsonStudio
     Deploy-CloudPakfordata -->|5| WatsonMachineLearning
+    Foundation --> CPDReadiness
+    Operators  --> CPDReadiness
+    ControlPlane  --> CPDReadiness
+    WatsonStudio  --> CPDReadiness
+    WatsonMachineLearning  --> CPDReadiness
     end
 
 ```
@@ -564,3 +576,8 @@ Note: please change the initial password
 
   User administration and integration with LDAP/SAML.
   ![Access Control](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/cpd-access-control.png)
+
+### 7.0 References
+
+- [Cloud Pak for Data 4.5](https://www.ibm.com/docs/en/cloud-paks/cp-data/4.5.x)
+- [IBM Experts Lab SWAT Offering](https://w3.ibm.com/w3publisher/cloud-pak-for-data-swat-team/)
