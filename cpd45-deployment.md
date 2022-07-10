@@ -2,7 +2,7 @@
 
 Cloud Pak for data is a comprehensive Enterprise level datafabric and datascience platform. 
 
-
+[TOC]
 
 ### 1.0 Deployment Planning
 
