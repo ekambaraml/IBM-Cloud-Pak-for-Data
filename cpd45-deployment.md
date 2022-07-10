@@ -88,19 +88,21 @@ Sizing of the hardware, storage are based on the number of concurrent users, con
 graph LR
     
     Hardware-Sizing --> Storage-Planning
-    Storage-Planning --> OpenShift[OpenShift Install]
+    Storage-Planning --> CPD-Licensing
     CPD-Licensing -->  Networking
     Networking --> OpenShift
     OpenShift --> NodeSettings
- 
-    CPD-Licensing --> Deploy-CloudPakfordata
+    NodeSettings --> Deploy-CloudPakfordata
     Deploy-CloudPakfordata --> PostInstall
     PostInstall-->Day2Ops
-    subgraph NodeConfigurations
+    
+    subgraph OCP[Building OpenShift Cluster]
     NodeSettings --> CRIO[Crio Settings]
     NodeSettings --> Kernel[Kernel Parameter]
+    NodeSettings --> PrivateRegistry
     NodeSettings --> GlobalPullSecrets
     end
+    
     subgraph OLM[CPD OLM Install]
     Deploy-CloudPakfordata -->|1| Foundation[IBM Foundational Services]
     Deploy-CloudPakfordata -->|2| Operators[Operator Subscriptions]
