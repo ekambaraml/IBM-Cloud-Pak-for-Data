@@ -1,16 +1,38 @@
 # Deploying cloud pak for data 4.5 in a self managed openshift cluster
 
-Cloud Pak for data is a comprehensive Enterprise level datafabric and datascience platform. 
+Building a data science and AI platform in an on-perm infrastructure requires careful planning and right skillsets. IBM Cloud Pak for data is a comprehensive end-to-end enterprise level datafabric and datascience platform. The following document shows, how easily and quicly it can be built on on-perm infrastructe of the organization.
+
+
 
 
 ### 1.0 Deployment Planning
 
 
 #### 1.1 Architecture
-Building a Data Science plaform using IBM Cloud Pak for Data.  This includes deployment of Watson Studio and Watson Machine Learning for building and Running Machine Learning models and Creating Auto AI models.
+
+IBM Cloud Pak for Data is comprehensive Datafabri/AI/ML/DataScience platform which can be built to scale from few users to thousands of business and datascientis and developers. Identifying the usecase will help sizing the hardware, planning the Network and software component requirements for deployment. 
+
+In this example, We are building the IBM Cloud Pak for Data cluster for building DataScience platform for Developers, Data Scientists to build ML/AI models and deploying to model to infusing in to the business applications.
+
+Examples of this POC Usecase includes:
+- Data Scientists in this organizations prefer the R-studio and Python for building ML models
+- Data in Hadoop/Hive, Relatioan Database systems, those will used for Model training and testing 
+- Deploy multiple ML Models in production-ready environment
+- Models need to be monitored for drift and model bias
+- Embed ML scoring end-point with web based business application
+
+What are the minimum Software components required:
+- IBM RedHat OpenShift - IBM's Enterprise level kubernetic platform, Entitlement is provided as part Cloud Pak for Data license
+- Cloud Pak for Data  - IBM's Enterprise level Datafabric and Data Science platform
+- Cloud Pak for Data Components
+  - Watson Studio, R-Studio, Jupyter Notebook - Development
+  - Watson Machine Learning - Model Runtime environment and Auto AI Creation
+
+
 ![architecture](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/deployment-architecture-2.0.png)
 
-Cloud Pak for Data components for Data Sciences usecase.
+Sizing of the hardware, storage are based on the number of concurrent users, concurrent models to be running and number of Cloud Pak for Data components will be installed.
+
 ![CPD Components](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/cpd45.png)
 
 #### 1.2 Requirements
