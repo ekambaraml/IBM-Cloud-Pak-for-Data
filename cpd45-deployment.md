@@ -86,7 +86,13 @@ Sizing of the hardware, storage are based on the number of concurrent users, con
 
 ```mermaid
 graph LR
+
     UseCase --> Planning
+    Planning --> OpenShift[Build OpenShift Cluster]
+    OpenShift  --> Deploy-CloudPakfordata
+    Deploy-CloudPakfordata --> PostInstall
+    PostInstall-->Day2Ops
+    
     subgraph Architecture[Planning and Architecture]
     Planning --> Hardware-Sizing
     Planning --> Storage-Planning
@@ -97,9 +103,6 @@ graph LR
     Networking --> PlanningReadines
     CPD-Licensing --> PlanningReadines
     end
-    
-    Planning --> OpenShift[Build OpenShift Cluster]
-
     
     subgraph OCP[Configuring OpenShift Cluster]
     OpenShift --> NodeSettings
@@ -116,7 +119,6 @@ graph LR
     StorageProvisioner   -->OCPReadiness
     end
     
-    OpenShift  --> Deploy-CloudPakfordata
     subgraph OLM[Installing Cloud Pak for Data]
     Deploy-CloudPakfordata -->|1| Foundation[IBM Foundational Services]
     Deploy-CloudPakfordata -->|2| Operators[Operator Subscriptions]
@@ -129,8 +131,7 @@ graph LR
     WatsonStudio  --> CPDReadiness
     WatsonMachineLearning  --> CPDReadiness
     end
-    Deploy-CloudPakfordata --> PostInstall
-    PostInstall-->Day2Ops
+
 ```
 
 
