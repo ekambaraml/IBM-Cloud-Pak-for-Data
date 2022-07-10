@@ -64,20 +64,28 @@ Cloud Pak for Data components for Data Sciences usecase.
 
 
 ```mermaid
-flowchart LR;
-    OpenShift --> Hardware-Sizing
+graph LR
+    
     Hardware-Sizing --> Storage-Planning
-    Storage-Planning --> NodeSettings
+    Storage-Planning --> OpenShift[OpenShift Install]
+    OpenShift --> NodeSettings
     NodeSettings --> Networking
     Networking --> CPD-Licensing
     CPD-Licensing --> Deploy-CloudPakfordata
-```
-
-```mermaid
-flowchart TD;
-    NodeSettings --> CRIO
-    NodeSettings --> KernelParameter
+    Deploy-CloudPakfordata --> PostInstall
+    PostInstall-->Day2Ops
+    subgraph NodeConfigurations
+    NodeSettings --> CRIO[Crio Settings]
+    NodeSettings --> Kernel[Kernel Parameter]
     NodeSettings --> GlobalPullSecrets
+    end
+    subgraph OLM[CPD OLM Install]
+    Deploy-CloudPakfordata -->|1| Foundation[IBM Foundational Services]
+    Deploy-CloudPakfordata -->|2| Operators[Operator Subscriptions]
+    Deploy-CloudPakfordata -->|3| ControlPlane
+    Deploy-CloudPakfordata -->|4| WatsonStudio
+    Deploy-CloudPakfordata -->|5| WatsonMachineLearning
+    end
 
 ```
 
@@ -89,6 +97,17 @@ flowchart TD;
     Deploy-CloudPakfordata --> WatsonMachineLearning
 ```
 
+
+```mermaid
+flowchart TD;
+    Day2Ops -->LDAP-SAML
+    Day2Ops -->BRDR[Backup/Restore, DR]
+    Day2Ops -->HealthCheck
+    Day2Ops -->Performance
+    Day2Ops -->Monitoring[Monitoring and Alerts Integration]
+    Day2Ops -->Upgrades
+
+```
 ### 2.0 Client Setup
 
 #### 2.1 Environment setup
