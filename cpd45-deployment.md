@@ -4,23 +4,62 @@ Cloud Pak for data is a comprehensive Enterprise level datafabric and datascienc
 
 This document will show how 
 
-### Deployment Architecture
+### 1.0 Deployment Planning
 
 
-
-![architecture](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/deployment-architecture-2.0.png)
+#### 1.1 Architecture
 Building a Data Science plaform using IBM Cloud Pak for Data.  This includes deployment of Watson Studio and Watson Machine Learning for building and Running Machine Learning models and Creating Auto AI models.
-### Requirements
+![architecture](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/deployment-architecture-2.0.png)
 
-* [ ] OpenShift 
+Cloud Pak for Data components for Data Sciences usecase.
+![CPD Components](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/cpd45.png)
 
-> OpenShift version 4.6 or higher
-minimum 3 worker nodes with 16vCPU and 64GB RAM, 300GM localstorgae
+#### 1.2 Requirements
 
-* [ ] Persistent Storage 
-1 TB persistent storage
+* OpenShift Cluster 4.8.x
+* Private Container Image Registry
+  
+  Image Registry supporting with Docker Version 2 Schema2
+  
+* Cluster Compute resource requirements
+  * [ ] Minimum 3 worker nodes
+  * [ ] Each nodes should be of minimum 16vCPU, 64GB RAM and 300GB RAM
+  * [ ] Total cpu and memory requirements are calculated based components to be installed.
+  * [ ] Image Registry supporting with Docker Version 2 Schema2
 
-* [ ] 
+* Storage
+  * [ ] Minimum 1 TB Persistent volume storage
+  * [ ] Minimum 500GB Registry storage 
+  
+* Cloud Pak for Data 4.5 and Service
+  * [ ] Cloud Pak for Data control plane
+  * [ ] Watson Studio
+  * [ ] Watson Machine Learning
+  * [ ] Watson Knowledge Catalog  
+
+* Network access Requirements
+  * IBM Entitlement Registry and Software Image
+    * [ ] icr.io/cpopen
+    * [ ] cp.icr.io/cp
+    * [ ] quay.io
+    * [ ] docker.io
+  * Cloud Pak for Data client tools
+    * [ ] github.com/IBM
+
+* License
+  * [ ] IBM Cloud Pak for Data Standard/Enterprise license 
+  * [ ] IBM Entitlement API Key (myibm.ibm.com)
+
+* User Permissions
+  * [ ] OpenShift Administrator
+  * [ ] Cloud Pak for Data administrtor
+  * [ ] Read/Write permission to private registry (when used)
+
+* Bastion Host
+  * RHEL 8.x node
+  * 4 vCPU, 8GM RAM, 500 GB disk 
+  * Internet access to IBM entitlement registry
+  
 
 ```mermaid
 graph TD;
@@ -53,36 +92,76 @@ graph TD;
     CloudPakforData -->Validate
 ```
 
-### Setup Cluster
+### 2.0 Client Setup
+
+#### 2.1 Environment setup
 ```
-oc login ${OCP_URL}
-oc new-project ${PROJECT_CPFS_OPS}
-oc new-project ${PROJECT_CPD_INSTANCE}
-oc label namespace ${PROJECT_CPD_OPS} kubernetes.io/metadata.name=${PROJECT_CPD_OPS}
+cat env.sh
 
+# Cloud Pak for Data installation variables
 
-# Note: cpd-cli workspace stores the cluster info. you can not use the same workspace for working with more than one cluster
-./cpd-cli manage login-to-ocp \
---username=${OCP_USERNAME} \
---password=${OCP_PASSWORD} \
---server=${OCP_URL}
+# Cluster
+export OCP_URL=https://api.cpd45.cp.fyre.ibm.com:6443
+export OPENSHIFT_TYPE=self-managed
+export OCP_USERNAME=ocadmin
+export OCP_PASSWORD=ocadmin-password
+export OCP_TOKEN=<sha256~38qRExcS5ktRrKfz5ToR4nIEc2dwaVBwEUIqgAX2G-w>
 
+# Projects
+export PROJECT_CPFS_OPS=ibm-common-services        
+export PROJECT_CPD_OPS=ibm-common-services
+export PROJECT_CATSRC=openshift-marketplace
+export PROJECT_CPD_INSTANCE=cpd
+
+# Storage, Example NFS storage
+export STG_CLASS_BLOCK=managed-nfs-storage
+export STG_CLASS_FILE=managed-nfs-storage
+
+# IBM Entitled Registry
+export IBM_ENTITLEMENT_KEY=<API Key from myibm.ibm.com>
+
+# Cloud Pak for Data version
+export VERSION=4.5.0
+
+# Components
+export COMPONENTS=cpfs,cpd_platform,ws,wml
 
 ```
 
-#### Creating WKC Custom SCC
+#### 2.2 Download CPD Client tools
 ```
-./cpd-cli manage apply-scc \
---cpd_instance_ns=${PROJECT_CPD_INSTANCE} \
---components=wkc
-
-oc adm policy who-can use scc wkc-iis-scc \
---namespace ${PROJECT_CPD_INSTANCE} | grep "wkc-iis-sa"
-
+wget https://github.com/IBM/cpd-cli/releases/download/v11.0.0/cpd-cli-linux-EE-11.0.0.tgz
+tar xvf cpd-cli-linux-EE-11.0.0.tgz
+cd cpd-cli-linux-EE-11.0.0-20
+./cpd-cli version
+cpd-cli
+	Version: 11.0
+	Build Date: 2022-06-08T17:28:23
+	Build Number: 20
+	CPD Release Version: 4.5.0
 ```
 
-#### Node settings for CPD
-pause the reboot until the node level settings are updated
+#### 2.3 Get IBM Entitlement API Key
+get the CPD entitlement key from myibm.ibm.com under container software library.
+![entitlementkey](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/entitlementkey.png)
+
+Validate IBM entitlement registry access
+```
+podman login -u cp -p ${IBM_ENTITLEMENT_KEY} cp.icr.io
+```
+
+
+
+
+### 3.0 OpenShift node Settings
+
+The following steps will trigger restart of the nodes, to prevent multiple restart,  pause the nodes reboot until all the node level settings are applied
+```
+oc patch --type=merge --patch=‘{“spec”:{“paused”:true}}’ machineconfigpool/master
+oc patch --type=merge --patch=‘{“spec”:{“paused”:true}}’ machineconfigpool/worker
+```
+
+#### 3.1 Node CRIO settings
 
 
 ```
@@ -93,6 +172,8 @@ default_ulimits = [
 # Maximum number of processes allowed in a container.
 pids_limit = 12288
 
+
+# copy crio.conf from one of the cluster worker to local machine
 
 
 scp core@$node:/etc/crio/crio.conf /tmp/crio.conf
@@ -123,7 +204,7 @@ EOF
 
 ```
 
-### DB2 Kernel Parameter Settings
+#### 3.2 DB2 Kernel Parameter Settings
 
 
 Configure kubelet to allow Db2U to make unsafe sysctl calls for Db2 to manage required memory settings.
@@ -152,13 +233,80 @@ watch "oc get machineconfigpool"
 
 ```
 
-#### Global pullsecret
+#### 3.3 Global pullsecret
 
 ```
 ./cpd-cli manage add-icr-cred-to-global-pull-secret \
 ${IBM_ENTITLEMENT_KEY}
 ```
-### Installing Cloud Pak for Data control plane
+
+#### 3.4 Image Content Source Policy
+This is required when private registry is used. Or when Manta workflow is enabled for Watson Knowledge Catalog.
+
+#### 3.5 Validate the Node settings
+```
+oc patch --type=merge --patch=‘{“spec”:{“paused”:false}}’ machineconfigpool/master
+oc patch --type=merge --patch=‘{“spec”:{“paused”:false}}’ machineconfigpool/worker
+```
+
+Monitor the nodes are restarted and ready
+
+![monitor](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/node-status.png)
+
+
+Check MachineConfigPool is applied to all nodes
+![MCP](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/mcp.png)
+
+
+### 4.0 Cloud Pak for data project setup
+
+#### 4.1 Create project for cpd-instance and IBM operator namespace.
+```
+oc login ${OCP_URL}
+oc new-project ${PROJECT_CPFS_OPS}
+oc new-project ${PROJECT_CPD_INSTANCE}
+oc label namespace ${PROJECT_CPD_OPS} kubernetes.io/metadata.name=${PROJECT_CPD_OPS}
+```
+
+CPD OLM login
+```
+./cpd-cli manage login-to-ocp \
+--username=${OCP_USERNAME} \
+--password=${OCP_PASSWORD} \
+--server=${OCP_URL}
+
+    [INFO] 2022-07-10T00:09:58.087087Z Checking architecture: amd64
+    [INFO] 2022-07-10T00:09:58.087124Z Checking podman or docker
+    [INFO] 2022-07-10T00:09:58.132163Z Checking container image
+    [DEBUG] 2022-07-10T00:09:58.296843Z 20e4f8e2a660  icr.io/cpopen/cpd/olm-utils:latest              16 hours ago  Up 16 hours ago              olm-utils-play
+    [INFO] 2022-07-10T00:09:58.296943Z Container olm-utils-play is running already. Image: icr.io/cpopen/cpd/olm-utils:latest
+    [INFO] 2022-07-10T00:09:58.296977Z Processing subcommand login-to-ocp
+    [DEBUG] 2022-07-10T00:09:58.296999Z Checking if TTY should be turned off
+    KUBECONFIG is /opt/ansible/.kubeconfig
+    You must obtain an API token by visiting https://oauth-openshift.apps.swat-cpd45.cp.fyre.ibm.com/oauth/token/request
+    Using project "default" on server "https://api.swat-cpd45.cp.fyre.ibm.com:6443".
+    [SUCCESS] 2022-07-10T00:09:59.066260Z The login-to-ocp command ran successfully. Output and logs are in the /root/qb/cpd45/cpd-cli-linux-EE-11.0.0-20       /cpd-cli-workspace/olm-utils-workspace/work directory.
+
+ * Note: cpd-cli workspace stores the cluster info. you can not use the same workspace for working with more than one cluster
+```
+
+
+#### 4.2 Creating WKC Custom SCC
+```
+./cpd-cli manage apply-scc \
+--cpd_instance_ns=${PROJECT_CPD_INSTANCE} \
+--components=wkc
+
+Verify the SCC creation
+oc adm policy who-can use scc wkc-iis-scc \
+--namespace ${PROJECT_CPD_INSTANCE} | grep "wkc-iis-sa"
+
+```
+
+
+
+
+### 5.0 Installing Cloud Pak for Data control plane
 We are going to use the express installation method, In an express installation, the IBM® Cloud Pak for Data operators and the IBM Cloud Pak® foundational services operators are installed in the same project (namespace). The operators are granted permission to watch the project or projects where the Cloud Pak for Data platform and services are installed.
 
 
@@ -178,7 +326,7 @@ graph TD;
     Installation -->Day2Ops
 ```
 
-#### 4.1 Installing IBM Foundational services and Operators
+#### 5.1 Installing IBM Foundational services and Operators
 
 Expected time to complete this step: 15 mins
 
@@ -259,7 +407,7 @@ redhat-operators-wltsn                                            1/1     Runnin
 ```
 
 
-#### 4.2 Installing CPD Components
+#### 5.2 Installing CPD Components
 Components: CPD Control Plane, Watson Studio
 Expected time to complete this step : 2hrs
 
@@ -354,16 +502,16 @@ utils : include_vars -----------------------------------------------------------
 ```
 
 
-### Accessing the Cloud Pak for Data admin console
+### 6.0 Accessing the Cloud Pak for Data admin console
 
 
-* Check the Install status
+#### 6.1 Check the Install status
 ```
 ./cpd-cli manage get-cr-status \
 --cpd_instance_ns=${PROJECT_CPD_INSTANCE}
 ```
 
-* Get the Cluster console URL 
+#### 6.2 Get the Cluster console URL 
 
 ```
 oc get routes -n cpd
@@ -371,7 +519,7 @@ NAME   HOST/PORT                                 PATH   SERVICES        PORT    
 cpd    cpd-cpd.apps.swat-cpd45.cp.fyre.ibm.com          ibm-nginx-svc   ibm-nginx-https-port   passthrough/Redirect   None
 ```
 
-* Get the default password
+#### 6.3 Get the default password
 ```
 ./cpd-cli manage get-cpd-instance-details \
 --cpd_instance_ns=${PROJECT_CPD_INSTANCE} \
@@ -381,15 +529,15 @@ cpd    cpd-cpd.apps.swat-cpd45.cp.fyre.ibm.com          ibm-nginx-svc   ibm-ngin
 Note: please change the initial password
 ```
 
-* Accessing Cloud Pak for Data Admin Console URL
+#### 6.4 Accessing Cloud Pak for Data Admin Console URL
   Log into the CPD Admin console using the above URL.
   ![CPD Admin Console](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/cpd-main.png)
 
-* Monitoring the services in CPD
+#### 6.5 Monitoring the services in CPD
   Home --> Administration --> Monitoring
   ![Monitoring](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/cpd-monitor.png)
 
-* User Management
+#### 6.6 User Management
   Home --> Administration --> Access Control
 
   User administration and integration with LDAP/SAML.
