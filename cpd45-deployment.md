@@ -5,6 +5,11 @@ Cloud Pak for data is a comprehensive Enterprise level datafabric and datascienc
 This document will show how 
 
 ### Deployment Architecture
+
+
+
+![architecture](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/deployment-architecture-2.0.png)
+Building a Data Science plaform using IBM Cloud Pak for Data.  This includes Watson Studio and Watson Machine Learning..for building ML models
 ### Requirements
 
 * [ ] OpenShift 
@@ -349,16 +354,16 @@ utils : include_vars -----------------------------------------------------------
 ```
 
 
-### Get the Admin Console and Credentials
+### Accessing the Cloud Pak for Data admin console
 
 
-Check the status
+* Check the Install status
 ```
 ./cpd-cli manage get-cr-status \
 --cpd_instance_ns=${PROJECT_CPD_INSTANCE}
 ```
 
-Get the Cluster console URL
+* Get the Cluster console URL 
 
 ```
 oc get routes -n cpd
@@ -366,16 +371,28 @@ NAME   HOST/PORT                                 PATH   SERVICES        PORT    
 cpd    cpd-cpd.apps.swat-cpd45.cp.fyre.ibm.com          ibm-nginx-svc   ibm-nginx-https-port   passthrough/Redirect   None
 ```
 
-Get the default password
+* Get the default password
 ```
 ./cpd-cli manage get-cpd-instance-details \
 --cpd_instance_ns=${PROJECT_CPD_INSTANCE} \
 --get_admin_initial_credentials=true
 
 
-CPD Url: cpd-cpd.apps.swat-cpd45.cp.fyre.ibm.com
-CPD Username: admin
-CPD Password: Phx0SP2v03cR
-
 Note: please change the initial password
 ```
+
+* Accessing Cloud Pak for Data Admin Console URL
+
+When you log into the CPD Admin console using the above URL.
+
+![CPD Admin Console](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/cpd-main.png)
+
+* Monitoring the services in CPD
+Home --> Administration --> Monitoring
+[Monitoring](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/cpd-monitor.png)
+
+* User Management
+Home --> Administration --> Access Control
+
+User administration and integration with LDAP/SAML.
+![Access Control](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/cpd-access-control.png)
