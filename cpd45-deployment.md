@@ -60,37 +60,20 @@ Cloud Pak for Data components for Data Sciences usecase.
   * 4 vCPU, 8GM RAM, 500 GB disk 
   * Internet access to IBM entitlement registry
   
+#### 1.3 Deployment Flow
+
 
 ```mermaid
 graph TD;
-    OpenShift --> Hareware-Sizing
+    OpenShift --> Hardware-Sizing
     OpenShift --> Storage-Planning
-    Storage-Planning --> NFSClientProvisioner
-    Storage-Planning --> OpenShiftDataFoundation
     OpenShift --> NodeSettings
-    NodeSettings --> CrioSettings
-    NodeSettings --> KernelParameters
     OpenShift --> Networking
-    Networking --> Private-Registry
-    Networking --> IBM-Entitlement-Registry
-    NodeSettings --> GlobalPullSecrets
-    OpenShift --> CloudPakfordata
-    CloudPakfordata -->OLMConfiguration
-    CloudPakfordata -->InstallFoundataionalServices
-    CloudPakfordata -->InstallControlPlane
-    CloudPakfordata -->InstallComponents
+    OpenShift --> CPD-Licensing
+    OpenShift --> Deploy-CloudPakfordata
+
 ```
 
-
-
-```mermaid
-graph TD;
-    CloudPakforData -->OLMConfiguration
-    CloudPakforData -->InstallFoundataionalServices
-    CloudPakforData -->InstallControlPlane
-    CloudPakforData -->InstallComponents
-    CloudPakforData -->Validate
-```
 
 ### 2.0 Client Setup
 
