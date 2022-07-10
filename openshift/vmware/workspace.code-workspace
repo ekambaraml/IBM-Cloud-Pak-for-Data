@@ -11,6 +11,18 @@
 		},
 		{
 			"path": "../../../CPD40-Developments"
+		},
+		{
+			"path": "../../../Downloads"
+		},
+		{
+			"path": "../../.."
+		},
+		{
+			"path": "../../../../Downloads"
+		},
+		{
+			"path": "../../../../L2-L3-Architect-Profession"
 		}
 	],
 	"settings": {}
