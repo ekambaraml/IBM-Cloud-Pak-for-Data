@@ -64,16 +64,30 @@ Cloud Pak for Data components for Data Sciences usecase.
 
 
 ```mermaid
-graph TD;
+flowchart LR;
     OpenShift --> Hardware-Sizing
-    OpenShift --> Storage-Planning
-    OpenShift --> NodeSettings
-    OpenShift --> Networking
-    OpenShift --> CPD-Licensing
-    OpenShift --> Deploy-CloudPakfordata
+    Hardware-Sizing --> Storage-Planning
+    Storage-Planning --> NodeSettings
+    NodeSettings --> Networking
+    Networking --> CPD-Licensing
+    CPD-Licensing --> Deploy-CloudPakfordata
+```
+
+```mermaid
+flowchart TD;
+    NodeSettings --> CRIO
+    NodeSettings --> KernelParameter
+    NodeSettings --> GlobalPullSecrets
 
 ```
 
+
+```mermaid
+flowchart TD;
+    Deploy-CloudPakfordata --> ControlPlane
+    Deploy-CloudPakfordata --> WatsonStudio
+    Deploy-CloudPakfordata --> WatsonMachineLearning
+```
 
 ### 2.0 Client Setup
 
@@ -300,13 +314,13 @@ Use the cpd-cli manage apply-olm command to create the IBM Cloud Pak® foundatio
 The instructions assume that you are installing the operators for all of the components at the same time, which enables you to complete the task in fewer steps. You can always install additional operators if you decide to install additional services on your environment.
 
 ```mermaid
-graph TD;
+flowchart LR;
     Installation -->FoundationalServices-Operators
-    Installation -->ControlPlane
-    Installation -->Components
-    Installation -->Validation
-    Installation -->PostInstall
-    Installation -->Day2Ops
+    FoundationalServices-Operators -->ControlPlane
+    ControlPlane -->Components
+    Components -->Validation
+    Validation -->PostInstall
+    PostInstall -->Day2Ops
 ```
 
 #### 5.1 Installing IBM Foundational services and Operators
