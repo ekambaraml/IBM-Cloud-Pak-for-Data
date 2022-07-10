@@ -9,7 +9,7 @@ This document will show how
 
 
 ![architecture](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/deployment-architecture-2.0.png)
-Building a Data Science plaform using IBM Cloud Pak for Data.  This includes Watson Studio and Watson Machine Learning..for building ML models
+Building a Data Science plaform using IBM Cloud Pak for Data.  This includes deployment of Watson Studio and Watson Machine Learning for building and Running Machine Learning models and Creating Auto AI models.
 ### Requirements
 
 * [ ] OpenShift 
@@ -382,17 +382,15 @@ Note: please change the initial password
 ```
 
 * Accessing Cloud Pak for Data Admin Console URL
-
-When you log into the CPD Admin console using the above URL.
-
-![CPD Admin Console](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/cpd-main.png)
+  Log into the CPD Admin console using the above URL.
+  ![CPD Admin Console](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/cpd-main.png)
 
 * Monitoring the services in CPD
-Home --> Administration --> Monitoring
-[Monitoring](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/cpd-monitor.png)
+  Home --> Administration --> Monitoring
+  ![Monitoring](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/cpd-monitor.png)
 
 * User Management
-Home --> Administration --> Access Control
+  Home --> Administration --> Access Control
 
-User administration and integration with LDAP/SAML.
-![Access Control](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/cpd-access-control.png)
+  User administration and integration with LDAP/SAML.
+  ![Access Control](https://github.com/ekambaraml/IBM-Cloud-Pak-for-Data/blob/main/images/cpd-access-control.png)
