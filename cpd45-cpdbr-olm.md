@@ -70,9 +70,22 @@ podman tag icr.io/cpopen/cpd/cpdbr-velero-plugin:4.0.0-beta1-${BUILD_NUM}-${CPU_
 podman push $IMAGE_REGISTRY/$NAMESPACE/cpdbr-velero-plugin:4.0.0-beta1-${BUILD_NUM}-${CPU_ARCH} --tls-verify=false
 ```
 
+
+#### Configure S3-compatible storage
+We are using Minio for backup
+```
+
+
+```
+
+
 #### Install OADp 1.0 on cluster with internet access
 ```
 oc annotate namespace oadp-operator openshift.io/node-selector="" --overwrite
+
+Install OADP Operator using Operator Hub
+https://github.com/openshift/oadp-operator
+
 
 vi credentials-velero
 
