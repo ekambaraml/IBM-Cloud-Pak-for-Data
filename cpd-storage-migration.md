@@ -290,6 +290,10 @@ CLONEREPO_PVC=cpd-claim
 ### 4.2 Clone zen to cpd-claim
 
 cloning the cpd-instance project to a backup directory zen1-ppc in the PVC that is specified in environment file
+
+- Save CPD deployment and sts to file
+
+
 ```
 podman run -d \
    --env-file ./config/cpc_env.sh \
