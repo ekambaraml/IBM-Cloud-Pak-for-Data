@@ -210,11 +210,14 @@ deployment.apps/secretshare scaled
 check all deployments are scaled down
 ```
 oc get deploy
+
+ex: oc get deploy -n ibm-common-services
 ```
 
 wait for all pods to go down. It's fine if cert-manager pods remain with 0/1 running state
 ```
-watch "oc get pods"
+watch "oc get pods -n ibm-common-services"
+
 ```
 
 ```
