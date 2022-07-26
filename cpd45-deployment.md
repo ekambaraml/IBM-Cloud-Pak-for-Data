@@ -207,7 +207,15 @@ oc patch --type=merge --patch=‘{“spec”:{“paused”:true}}’ machineconf
 ```
 
 #### 3.1 Node CRIO settings
+```
+./cpd-cli manage login-to-ocp \
+--username=${OCP_USERNAME} \
+--password=${OCP_PASSWORD} \
+--server=${OCP_URL}
 
+./cpd-cli manage apply-crio \
+  --openshift-type=${OPENSHIFT_TYPE}
+```  
 
 ```
 [crio.runtime]
@@ -253,6 +261,11 @@ EOF
 
 
 Configure kubelet to allow Db2U to make unsafe sysctl calls for Db2 to manage required memory settings.
+
+```
+./cpd-cli manage apply-db2-kubelet \
+--openshift-type=${OPENSHIFT_TYPE}
+```
 
 ```
 cat << EOF | oc apply -f -
