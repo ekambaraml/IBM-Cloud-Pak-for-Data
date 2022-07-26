@@ -93,7 +93,7 @@ oc policy add-role-to-group system:image-puller system:serviceaccounts:$project 
 example:
 ```
 export project=zen
-oc policy add-role-to-group system:image-puller system:serviceaccounts:$project --namespace zen-cpc
+oc policy add-role-to-user system:image-puller system:serviceaccount:$project:clone-service-account -n zen-cpc
 ```
 
 ### 3.4 push the sincrr image available from a registry
