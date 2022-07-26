@@ -302,7 +302,7 @@ podman run -d \
    --env-file ./config/cpc_env.sh \
    -e ACTION=CLONE \
    -e PROJECT=zen \
-   -e COSBUCKET=zen1-ppc \
+   -e BACKUP_DIR=zen1-ppc \
    -e SERVER=$(oc whoami --show-server) \
    -e TOKEN=$(oc whoami -t) \
    clonetool
@@ -310,8 +310,18 @@ podman run -d \
 
 ```
 example:
-podman run -d    --env-file ./config/cpc_env.sh    -e ACTION=CLONE    -e PROJECT=zen  -e SERVER=$(oc whoami --show-server)    -e TOKEN=$(oc whoami -t)    clonetool
+
+podman run -d --env-file ./config/cpc_env.sh -e ACTION=CLONE -e PROJECT=zen -e BACKUP_DIR=zen1-ppc -e SERVER=$(oc whoami --show-server) -e TOKEN=$(oc whoami -t) clonetool
+
 ```
+Note: If BACKUP_DIR option is not supplied, you will get error ```
+[2022-07-26 14:55:16 INFO] Starting job to clone metadata to PVC
+error: unable to process template
+  Required value: template.parameters[3]: parameter BACKUP_DIR is required and must be specified
+error: no objects passed to create
+[2022-07-26 14:55:16 INFO] Waiting for metadata cloning pod to become active (max 5 min)
+```
+
 
 Check progress
 ```
